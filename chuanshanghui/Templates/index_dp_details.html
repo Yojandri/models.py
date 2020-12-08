@@ -1,0 +1,25 @@
+{% extends '#base.html' %}
+{% block title %}部门介绍{% endblock title %}
+{% block body %}
+<section class="Hui-article-box">
+	<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i>首页<span class="c-gray en">&gt;</span><span class="maincolor">部门介绍</span></nav>
+	<div class="Hui-article">
+        <ul style="margin: 20px;height: 100%">
+            {% for dp in dpintro %}
+                <li id="{{ dp.dp_num }}" style="margin: 10px;height:200px;border: 1px solid #EEEEEE">
+                    <div style="height: 100%;float: left;width: 40%;margin:5px 0 0">
+                        <img src="/media/{{ dp.dp_image }}" height="90%">
+                    </div>
+                    <div style="height: 100%;float: right;width: 60%;">
+                        <p style="text-align: center;font-size: 20px;font-weight: bold">{{ dp.dp_name }}</p>
+                        <p>{{ dp.dp_presentetion }}</p>
+                    </div>
+
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</section>
+{% endblock body %}
+{% block yewu_js %}
+{% endblock yewu_js %}

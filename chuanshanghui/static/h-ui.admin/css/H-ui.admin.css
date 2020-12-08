@@ -1,0 +1,210 @@
+@charset "utf-8";
+html{height:100%}
+body{min-height: 100%;position: relative;font-size:14px;color:#333; background-color:#fff}
+a{color:#333}a:hover,a:focus,.maincolor,.maincolor a{color: #cc0000
+			 }
+.bg-1{ background-color:#f5fafe}
+h4{line-height:30px}
+.fl{float: left;}
+.fr{float: right}
+/*页面框架*/
+.Hui-header{position:absolute;top:0; right:0; left:0;height:44px;z-index:999; padding:0 15px}
+.Hui-aside{position: absolute;top:44px;bottom:0;left:0;padding-top:10px;width:199px;z-index:99;overflow:auto; background-color:rgba(238,238,238,0.98);_background-color:rgb(238,238,238);border-right: 1px solid #e5e5e5}
+.Hui-article-box{position: absolute;top:44px;right:0;bottom: 0;left:199px; overflow:hidden; z-index:1; background-color:#fff}
+	.Hui-article{position: absolute;top:34px;bottom:0;left:0; right:0;overflow:auto;z-index:1}
+.Hui-article .newsbox{width: 50%;padding-top:10px;padding-bottom:10px;padding-left:10px;float: left;display: block;height: 200px;}
+.Hui-article .newsbox_ul{width:100%;display: block;height: 180px;float: left}
+.Hui-article .pagecontainer{float: right;display: block;margin-top: 3px}
+.Hui-article .newsbox_title1{float:left;width:30%; margin-left: 10px;padding-left: 10px;background: none;color: #910000;font-size: 18px;border-left: 5px solid #910000;}
+.Hui-article .newsbox_title1 .newsmore{color: #C70611;margin-left: 10px;}
+.Hui-article .newsbox .newsbox_ul a{height: 20px;color: #6A6A6A;width: 100%;overflow: hidden;display: block;}
+.Hui-article .newsbox .newsbox_ul li{height:26px;width: 97%;padding-left: 3%;line-height: 22px;border-bottom: 1px dotted #9B9B9B;display: list-item;background: url("../images/biaotou.png") left center no-repeat;}
+.Hui-article .newsbox .newsbox_ul .time{float:right;color: #9A9A9A;background: transparent;bottom: 0;display: block;width: 40%}
+.Hui-article .newsbox .newsbox_ul .newsbox_title2 {float: left;display: block;width: 60%}
+.Hui-article .news_slide{height:200px;position:relative;float:right;display: block;width:48%;padding-top:10px;padding-left: 5px;padding-bottom: 10px;}
+.Hui-article .news_slide .banner{margin-left: 10%;padding-left: 10px;margin-top: 20px;
+    height: 80%;
+    overflow: hidden;
+    position: relative;
+    display: flex;}
+.Hui-article .banner .pic{height: 100%;}
+.Hui-article .banner .pic li{position: absolute;top: 0;right: 0;height: 100%;display: none;left: 10%}
+.Hui-article .banner .pic li a{height: 100%;display: block;width: 80%;}
+.Hui-article .banner .pic li a img{height: 100%;width:100%}
+.Hui-article .banner .btn{display: none;
+    z-index: 1;
+    align-self: center;
+    position: absolute;
+    transition: all 0.4s linear;
+    background: transparent;
+    border-color: transparent;}
+.Hui-article .banner .btn .py-arrow-left, .Hui-article .banner .btn .py-arrow-right{color:#c3c3c3;font-weight: 600;}
+.Hui-article .banner .btn .py-arrow-left:hover, .Hui-article .banner .btn .py-arrow-right:hover{color: #666666;}
+.Hui-article .banner .prev{left:0px;}
+.Hui-article .banner .next{right: 35px;}
+.Hui-article .banner:hover .btn{display:block;transition: all 0.5s linear;}
+.Hui-article .banner .tab{width: 140px;
+    height: 12px;
+    position: absolute;
+    left: 40%;
+    bottom: 20px;
+    margin-left: -49px;
+    display: flex;}
+.Hui-article .banner .tab li{
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1px solid #fff;
+    margin: 0 6px;
+}
+.Hui-article .banner .tab li.active{background: white;}
+.Hui-article .dp_intro{position:relative;float:left;display: block;width:98%;padding-top:10px;padding-left: 10px;padding-bottom: 10px;height:auto}
+.Hui-article .dp_intro .dp_intro_title1{float:left;width:30%; margin-left: 10px;padding-left: 10px;background: none;color: #910000;font-size: 18px;border-left: 5px solid #910000;}
+.Hui-article .dp_intro .dp_intro_title1 .newsmore{color: #C70611;margin-left: 10px;}
+.Hui-article .dp_intro_ul{width:100%;background: #fff;
+    padding: 20px 20px 5px 10px;
+    display: flex;
+    justify-content: space-between;}
+.Hui-article .dp_intro_ul li{width: 25%;
+    height: 100%;
+    position: relative;}
+.Hui-article .dp_intro_ul li .dp_into_thumbnail{width: 100%;
+    height: 100%;
+    overflow: hidden;}
+.dp_intro_ul li .dp_into_thumbnail img{width: 100%;
+    height: 100%;
+    transition: all 300ms ease-out;}
+.dp_intro_ul li .dp_intro_info{height: 50%;
+    width: 100%;
+    line-height: 26px;
+    color: #fff;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 0 15px;
+    box-sizing: border-box;}
+.Hui-article .dp_intro_ul li:hover img{
+    transform: scale(1.2);
+    transition: all 300ms ease-in;
+}
+.Hui-article .dp_intro_ul li:hover .info{background: rgba(0, 0, 0, 0.6);}
+.Hui-container{ padding:45px 0 0}
+.Hui-aside,.Hui-article-box,.dislpayArrow{-moz-transition: all 0.2s ease 0s;-webkit-transition: all 0.2s ease 0s;-ms-transition: all 0.2s ease 0s;-o-transition: all 0.2s ease 0s;transition: all 0.2s ease 0s}
+.big-page .Hui-article-box,.big-page .dislpayArrow,.big-page .breadcrumb{left:0px}
+.big-page .Hui-aside{ left:-200px}
+.page-container{ padding:20px}
+@media (max-width: 767px) {
+	.page-container{ padding:15px}
+}
+/*组件*/
+/*logo*/
+
+/*导航*/
+#Hui-nav > ul > li{ font-weight:normal}
+@media (max-width: 767px) {
+	#Hui-nav{display: block; top: 0; left: 65px; right: 65px}
+	#Hui-nav > ul { width: 100%}
+	#Hui-nav > ul > li{ width: 24%;text-align:center;}
+	#Hui-nav > ul > li a{ text-align: center; padding: 0}
+}
+#Hui-userbar{right:20px; position:absolute; top:0}
+#Hui-userbar > ul > li > a{padding:0 10px}
+	
+#Hui-msg .badge{ position:absolute; left:19px; top:4px; font-size:12px; font-weight:normal; padding:1px 5px}
+/*左侧菜单*/
+.Hui-aside .menu_dropdown dl{ margin-bottom:0}
+.Hui-aside .menu_dropdown dt{display:block;line-height:35px;padding-left:15px;cursor:pointer;position:relative;border-bottom: 1px solid #e5e5e5;font-weight:normal}
+.Hui-aside .menu_dropdown dt .menu_dropdown-arrow{ position:absolute;overflow: hidden; top:0; right:15px;transition-duration:0.3s ;transition-property:all}
+.Hui-aside .menu_dropdown dd{ display:none}
+.Hui-aside .menu_dropdown dt.selected .menu_dropdown-arrow{transform: rotate(180deg)}
+.Hui-aside .menu_dropdown dd.selected{display:block; margin-left:0px}
+.Hui-aside .menu_dropdown ul{padding:0px}
+.Hui-aside .menu_dropdown li{line-height:35px;overflow:hidden;zoom:1}
+.Hui-aside .menu_dropdown li a{padding-left:15px; display:block;font-weight: bold; margin:0}
+.Hui-aside .menu_dropdown li a i{ font-weight: normal}
+.Hui-aside .menu_dropdown dd ul{padding:3px 8px}
+.Hui-aside .menu_dropdown dd li{line-height:32px}
+.Hui-aside .menu_dropdown dd li a{line-height:32px;padding-left:26px; border-bottom:none; font-weight:normal}
+.Hui-aside .menu_dropdown li a:hover{text-decoration:none}
+.Hui-aside .menu_dropdown li.current a,.menu_dropdown li.current a:hover{background-color:rgba(255,255,255,0.2)}
+/*菜单收缩切换*/
+.dislpayArrow{position: absolute;top: 0;bottom: 0;left:200px;width:0px; height:100%;z-index:10}
+.dislpayArrow a{ position:absolute; display:block; width:17px; height:61px;top:50%; margin-top:-30px;outline:none}
+.dislpayArrow a.open{ background-position:0 -61px}
+.dislpayArrow a:hover{ text-decoration:none; background-position:right 0}
+.dislpayArrow a.open:hover{background-position:right -61px}
+
+/*选项卡导航*/
+.Hui-tabNav-wp{position:relative; height:35px;overflow:hidden}
+.Hui-tabNav,
+.Hui-tabNav .acrossTab li
+,.Hui-tabNav .acrossTab li em{background-image:url(../images/acrossTab/acrossTab-2.png)}
+.Hui-tabNav{height:35px; padding-right:75px;overflow:hidden; position:relative;background-color:#efeef0; background-repeat: repeat-x; background-position: 0 -175px;}
+.Hui-tabNav .acrossTab{ position:absolute; height:26px; line-height:26px; background:none; top:8px; left:0;padding-top:0}
+.Hui-tabNav .acrossTab li{height:26px;line-height:26px;}
+.Hui-tabNav .acrossTab li em{ right:-16px; height: 26px; width: 16px}
+.loading {background:url(../images/loading.gif) no-repeat center; height:100px}
+.show_iframe{ position:absolute; top:0; right:0; left:0; bottom:0;}
+.show_iframe iframe {position: absolute;bottom: 0;height: 100%;width: 100%}
+.Hui-tabNav-more {position: absolute;right:0px;width:70px;top:4px;display: none}
+
+/*面包屑导航*/
+.breadcrumb{background-color:#f5f5f5; padding:0 20px; position:relative; z-index:99}
+@media (max-width: 767px) {
+	.breadcrumb{ padding:0 15px;}
+	.show_iframe{-webkit-overflow-scrolling: touch;overflow-y: scroll;}
+}
+
+/*横向手机 竖向平板*/
+@media (max-width: 767px) {
+	.Hui-aside{ display:none;float:none; width:100%; height:auto; margin-top:0;padding-top:0;bottom:auto}
+	.big-page .Hui-aside{ left:0!important}
+		.menu_dropdown dt{line-height:44px}
+		.menu_dropdown li,.menu_dropdown dd li,.menu_dropdown dd li a{ line-height:44px}
+  .Hui-tabNav{ position:fixed; z-index:998}
+  .Hui-article{ top:44px}
+  .Hui-article-box{ position:static; left:0}
+  .Hui-article-box .pd-20{padding:15px}
+		.Hui-article{left:0}
+		.Hui-container .bk-gray{ border:none}
+		.Hui-container .pd-10{ padding:0}
+}
+
+/*==============以下是业务相关的样式====================*/
+/*权限*/
+.permission-list{ border:solid 1px #eee;}
+.permission-list > dt{ background-color:#efefef;padding:5px 10px}
+.permission-list > dd{ padding:10px; padding-left:30px}
+.permission-list > dd > dl{ border-bottom:solid 1px #eee; padding:5px 0}
+.permission-list > dd > dl > dt{ display:inline-block;float:left;white-space:nowrap;width:100px}
+.permission-list > dd > dl > dd{ margin-left:100px;}
+.permission-list > dd > dl > dd > label{ padding-right:10px}
+
+/*图片预览*/
+.portfolio-area{ margin-right: -20px;}
+.portfolio-area li{position: relative; float: left; margin-right: 20px; width:162px; height:162px;margin-top: 20px;}
+.portfolio-area li.hover{ z-index:9}
+.portfolio-area li .portfoliobox{ position: absolute; top: 0; left: 0; width: 152px; height: 152px;padding:5px;border: solid 1px #eee; background-color: #fff;}
+.portfolio-area li .checkbox{position: absolute; top: 10px; right: 5px; cursor:pointer}
+.portfolio-area li.hover .portfoliobox{ height:auto;padding-bottom:10px;box-shadow:0 1px 3px rgba(68, 68, 68,0.3);-moz-box-shadow:0 1px 3px rgba(68, 68, 68,0.3);-webkit-box-shadow:0 1px 3px rgba(68, 68, 68,0.3)}
+.portfolio-area li .picbox{width: 150px; height: 150px;overflow: hidden;text-align: center;vertical-align:middle;display:table-cell; line-height:150px;}
+.portfolio-area li .picbox img{max-width:150px; max-height:150px;vertical-align:middle;}
+.portfolio-area li .textbox{ display: none; margin-top: 5px;}
+.portfolio-area li.hover .textbox{ display: block;}
+.portfolio-area li label{ display:block; cursor:pointer}
+
+/*个人信息表格*/
+.Hui-article .userInfo{width: 100%;padding-top: 10px;padding-bottom: 10px;padding-left: 30px;float: left;display: block;,}
+.Hui-article .userInfo_title1{padding-left: 10px;background: none;color: #910000;font-size: 16px;border-left: 2px solid #910000;}
+.Hui-article .userInfo_table{float:left;padding-top:10px;empty-cells:show;border-collapse: collapse;width: 55%;background: transparent;border: 1px solid #ddd;}
+.Hui-article .userInfo_table .leftone{padding-left:5px;background-color: #f5fafe;font-size: 12px;color: #333333;font-weight: bold;border: 1px #ddd;}
+.Hui-article .userInfo_table .rightone{padding-left:5px;color: #999999;font-size: 12px;border: 1px #ddd;}
+.Hui-article .userInfo_table .userInfo_row{border: 1px #ddd;height: 28px;}
+.Hui-article .userInfo_change{width: 35%;float: right;padding-top: 10px;}
+.Hui-article .userInfo_change .changePassword{text-decoration: none;cursor: pointer;color: #fff;background-color: #dd514c;border-color: #dd514c;}
+.Hui-article .userInfo_change .changeInfo{text-decoration: none;cursor: pointer;color: #fff;background-color: #5a98de;border-color: #5a98de;}
+
+/*部门介绍大列表*/
+.Hui-article .dp_intro_details{margin: 10px;}
+.Hui-article .dp_intro_details li{width:30%; margin:5px;}

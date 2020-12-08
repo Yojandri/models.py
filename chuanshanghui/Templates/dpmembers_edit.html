@@ -1,0 +1,98 @@
+{% extends '#base_layer.html' %}
+{% block title %}添加部门成员{% endblock title %}
+{% block body %}
+<article class="cl pd-20">
+    <form action="" method="post" class="form form-horizontal" id="form-admin-add">
+        {% csrf_token %}<!--防止跨站伪造-->
+        正在修改学号为{{ dpm_obj.stu_num }}的成员信息
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>部门：</label>
+			<div class="formControls col-xs-8 col-sm-9"> <span class="select-box" style="width:150px;">
+				<select name="dpnum" class="select" type="text" size="1"><span>{{ error2 }}</span>
+                    <option value="0">{{ dpm_obj.dp_num }}</option>
+					<option value="01">01组织部</option>
+					<option value="02">02创业就业促进部</option>
+                    <option value="03">03朝阳青年志愿者服务队</option>
+                    <option value="04">04社团联合会</option>
+                    <option value="05">05文体部</option>
+                    <option value="06">06宣传部</option>
+                    <option value="07">07学术科技部</option>
+                    <option value="08">08办公室</option>
+                    <option value="09">09学习部</option>
+                    <option value="10">10公关部</option>
+                    <option value="11">11外联部</option>
+                    <option value="12">12素质拓展中心</option>
+                    <option value="13">13权益部</option>
+                    <option value="14">14艺术团</option>
+				</select>
+				</span> </div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>职位：</label>
+			<div class="formControls col-xs-8 col-sm-9"> <span class="select-box" style="width:150px;">
+				<select name="stupost" class="select" size="1"><span>{ error3 }}</span>
+                    <option value="0">{{ dpm_obj.stu_post }}</option>
+					<option value="部长">部长</option>
+					<option value="副部长">副部长</option>
+					<option value="干事">干事</option>
+				</select>
+				</span> </div>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+				<input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+			</div>
+		</div>
+	</form>
+</article>
+
+<!--请在下方写此页面业务相关的脚本-->
+{% block yewu_js %}
+<script type="text/javascript" src="/static/lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="/static/lib/datatables/1.10.15/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="/static/lib/laypage/1.2/laypage.js"></script>
+<script type="text/javascript">
+$(function(){
+	$('.skin-minimal input').iCheck({
+		checkboxClass: 'icheckbox-blue',
+		radioClass: 'iradio-blue',
+		increaseArea: '20%'
+	});
+	
+	$("#form-admin-add").validate({
+		rules:{
+			stu_name:{
+				required:true,
+				minlength:1,
+				maxlength:16
+			},
+			stu_sex:{
+				required:true,
+			},
+			stu_phone:{
+				required:true,
+				isPhone:true,
+			},
+			stu_post:{
+				required:true,
+			},
+			dp_name:{
+				required:true,
+			},
+		},
+		onkeyup:false,
+		focusCleanup:true,
+		success:"valid",
+		submitHandler:function(form){
+			$(form).ajaxSubmit();
+			var index = parent.layer.getFrameIndex(window.name);
+			parent.$('.btn-refresh').click();
+			parent.layer.close(index);
+		}
+	});
+});
+</script>
+{% endblock yewu_js %}
+
+    <!--/请在上方写此页面业务相关的脚本#-->
+{% endblock body %}

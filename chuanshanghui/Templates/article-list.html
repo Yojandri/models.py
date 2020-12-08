@@ -1,0 +1,129 @@
+﻿{% extends '#base.html' %}
+{% block title %}资讯列表{% endblock title %}
+{% block staticfiles %}
+<script type="text/javascript" src="../static/lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="../static/lib/datatables/1.10.15/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../static/lib/laypage/1.2/laypage.js"></script>
+{% endblock staticfiles %}
+{% block body %}
+<section class="Hui-article-box">
+	<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i>首页<span class="c-gray en">&gt;</span><span class="maincolor">资讯列表</span></nav>
+	<div class="Hui-article">
+        <article class="cl pd-20">
+			<form action="{% url 'chuanshanghui:article_list' %}" method="post" class="text-c">搜索：
+                {% csrf_token %}
+				<input type="text" class="input-text" style="width:250px" placeholder="输入活动标题" id="search_name" name="search_name">
+				<button type="submit" class="btn btn-success" id="" name=""><i class="Hui-iconfont">&#xe665;</i> 搜资讯</button>
+			</form>
+			<div class="cl pd-5 bg-1 bk-gray mt-20">
+				<span class="l">
+                    <a href="javascript:;" onclick="delete_all()" class="btn btn-danger radius"><i class="Hui-iconfont">&#xe6e2;</i> 批量删除</a>
+                    <a href="javascript:;" onclick="article_add('添加资讯','{% url 'chuanshanghui:article_add' %}','800','500')" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 添加资讯</a>
+                </span>
+			</div>
+            <table class="table table-border table-bordered table-bg">
+				<thead>
+					<tr>
+						<th scope="col" colspan="9">您的发布：</th>
+					</tr>
+					<tr class="text-c">
+                        <th width="25"><input type="checkbox" name="" id="chAll" value=""></th>
+                        <th>ID</th>
+						<th>资讯标题</th>
+						<th>发布时间</th>
+						<th>上次更新时间</th>
+                        <th>状态</th>
+						<th width="100">操作</th>
+					</tr>
+				</thead>
+				<tbody id="ch">
+                {% if result %}
+                    {% for a in result %}
+                    <tr class="text-c">
+						<td><input type="checkbox" value="" name=""></td>
+                        <td id="act_num">{{ a.article_num }}</td>
+						<td>{{ a.article_name }}</td>
+						<td>{{ a.article_release_time}}</td>
+						<td>{{ a.article_update_time }}</td>
+                        <td>{% if a.article_is_delete %}已删除{% else %}已发布{% endif %}</td>
+						<td class="td-manage"><a title="编辑" href="javascript:;" onclick="article_edit('文章编辑','{% url 'chuanshanghui:article_detail' a.article_num %}','800','500')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a>{% if a.article_is_delete %}<a title="恢复" href="/chuanshanghui/article_reget/?article_num={{ a.article_num }}" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe66b;</i></a>{% else %}<a title="删除" href="/chuanshanghui/article_delete/?article_num={{ a.article_num }}" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a>{% endif %}</td>
+					</tr>
+                    {% endfor %}
+                {% else %}
+                {% for a in all_article %}
+					<tr class="text-c">
+						<td><input type="checkbox" value="" name=""></td>
+                        <td id="act_num">{{ a.article_num }}</td>
+						<td>{{ a.article_name }}</td>
+						<td>{{ a.article_release_time}}</td>
+						<td>{{ a.article_update_time }}</td>
+                        <td>{% if a.article_is_delete %}已删除{% else %}已发布{% endif %}</td>
+						<td class="td-manage"><a title="编辑" href="javascript:;" onclick="article_edit('文章编辑','{% url 'chuanshanghui:article_detail' a.article_num %}','800','500')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a>{% if a.article_is_delete %}<a title="恢复" href="/chuanshanghui/article_reget/?article_num={{ a.article_num }}" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe66b;</i></a>{% else %}<a title="删除" href="/chuanshanghui/article_delete/?article_num={{ a.article_num }}" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a>{% endif %}</td>
+					</tr>
+                {% endfor %}
+                {% endif %}
+				</tbody>
+			</table>
+        </article>
+        <div style="margin: 10px 40px 10px 10px;float: right">
+                 <p style="float: left;color: #880000">当前第{{ page_num }}页 |</p>
+                 <a href="{% url 'chuanshanghui:article_list' %}?page=1">首页</a>
+                 {{ page_html|safe }}
+                 <a href="{% url 'chuanshanghui:article_list' %}?page={{ total_page }}">尾页</a>
+        </div>
+    </div>
+</section>
+{% endblock body %}
+{% block yewu_js %}
+function article_add(title,url,w,h){
+    layer_show(title,url,w,h);}
+function article_edit(title,url,w,h){
+    layer_show(title,url,w,h);}
+// 获取元素
+var chAll = document.getElementById('chAll'); //chAll是一个checkbox复选框
+var chs = document.getElementById('ch').getElementsByTagName('input'); //选中表格主体部分所有的checkbox
+
+// 给全选矿绑定click事件，获取chALL的状态(选中/非选中 即 this.checked)
+chAll.onclick = function() {
+	//console.log(this.checked);
+	for(var i = 0; i<chs.length; i++){
+		chs[i].checked = this.checked;
+	}
+}
+// 每个小按钮绑定事件
+for(var i = 0; i<chs.length; i++){
+	chs[i].onclick = function() {
+		var flag = true;
+		for(var j = 0; j<chs.length; j++){
+			if(!chs[j].checked){ //如果小按钮中有一个未被选中 则 flag = false
+				flag = false;
+			}
+		}
+		// 如果小按钮全部被选中，则flag = true
+		// 把flag的值给全选框
+		chAll.checked = flag;
+	}
+}
+function delete_all(){
+	var _list = [];
+	for(var j = 0;j<chs.length;j++){
+        if(chs[j].checked){
+		    article_num = $(chs[j]).closest('tr').find('td').eq(1).text();
+            _list.push(article_num);
+    }
+	};
+    layer.confirm('确认要删除吗？',function(index){
+    $.ajax({
+        url:'{% url 'chuanshanghui:article_delete' %}',
+        data:{"list":JSON.stringify(_list)},
+        type:'POST',
+        success:function(data){
+        alert("批量删除成功");
+        },
+        error:function(data) {
+        alert("批量删除失败")
+        },
+    });
+    });
+}
+{% endblock yewu_js %}

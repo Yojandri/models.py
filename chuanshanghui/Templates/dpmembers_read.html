@@ -1,0 +1,63 @@
+﻿{% extends '#base.html' %}
+{% block title %}部门成员管理{% endblock title %}
+{% block body %}
+<section class="Hui-article-box">
+	<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i>
+        <a href="/chuanshanghui/index/">首页</a>
+		<span class="c-gray en">&gt;</span>
+		<a href="/chuanshanghui/dp_list/">部门管理</a>
+		<span class="c-gray en">&gt;</span>
+		<a href="/chuanshanghui/dpmembers_list/">部门成员管理</a>
+        <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a>
+    </nav>
+	<div class="Hui-article">
+		<article class="cl pd-20">
+            <div class="userInfo">
+			<p class="userInfo_title1">个人信息:</p>
+            <table class="userInfo_table">
+                <tr class="userInfo_row">
+                    <td class="leftone">姓名:</td>
+                    <td class="rightone">{{ dpm_p.stu_name }}</td>
+                </tr>
+                <tr class="userInfo_row">
+                    <td class="leftone">学号:</td>
+                    <td class="rightone">{{ dpm_obj.stu_num }}</td>
+                </tr>
+                <tr class="userInfo_row">
+                    <td class="leftone">部门:</td>
+                    <td class="rightone">{{ dpm_dp.dp_name }}</td>
+                </tr>
+                <tr class="userInfo_row">
+                    <td class="leftone">职务:</td>
+                    <td class="rightone">{{ dpm_obj.stu_post }}</td>
+                </tr>
+                <tr class="userInfo_row">
+                    <td class="leftone">学院:</td>
+                    <td class="rightone">{{ dpm_p.stu_college }}</td>
+                </tr>
+                <tr class="userInfo_row">
+                    <td class="leftone">专业:</td>
+                    <td class="rightone">{{ dpm_p.stu_major }}</td>
+                </tr>
+                <tr class="userInfo_row">
+                    <td class="leftone">班级:</td>
+                    <td class="rightone">{{ dpm_p.stu_class }}</td>
+                </tr>
+                <tr class="userInfo_row">
+                    <td class="leftone">电话:</td>
+                    <td class="rightone">{{ dpm_p.stu_phone }}</td>
+                </tr>
+                <tr class="userInfo_row">
+                    <td class="leftone">QQ:</td>
+                    <td class="rightone">{{ dpm_p.stu_qq }}</td>
+                </tr>
+                <tr class="userInfo_row">
+                    <td class="leftone">邮箱:</td>
+                    <td class="rightone">{{ dpm_p.stu_email }}</td>
+                </tr>
+            </table>
+                </div>
+        </article>
+	</div>
+</section>
+{% endblock body %}

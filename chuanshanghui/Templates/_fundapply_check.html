@@ -1,0 +1,106 @@
+{% extends '#base.html' %}
+{% block title %}审核状态{% endblock title %}
+{% block body %}
+    <section class="Hui-article-box">
+        <nav class="breadcrumb"><i class="Hui-iconfont"></i> <a href="{% url 'chuanshanghui:index' %}" class="maincolor">首页</a> <span class="c-999 en">&gt;</span><span class="c-666"><a href="{% url 'chuanshanghui:fund_apply' %}">报账申请</a></span></nav>
+	<div class="Hui-article">
+		<article class="cl pd-20">
+		  <table width="90%" border="0">
+		        <tr>
+					<td width="34%"><b>报账申请状态</b></td>
+		          <td width="38%">&nbsp;</td>
+		          <td width="28%">&nbsp;</td>
+	            </tr>
+		        <tr>
+		          <td>&nbsp;</td>
+		          <td>&nbsp;</td>
+		          <td>&nbsp;</td>
+	            </tr>
+                <tr>
+		          <td align="center" valign="middle">
+                  <i class="Hui-iconfont">&#xe676;</i>提交申请
+
+                  </td>
+		          <td align="center" valign="middle">
+                  <i class="Hui-iconfont">&#xe676;</i>审核申请</td>
+		          <td align="center" valign="middle">
+                  <i class="Hui-iconfont">&#xe676;</i>通过申请</td>
+                  </tr>
+		        <tr>
+		          <td align="center">需要报账部门填写报账申请表</td>
+		          <td align="center">接收报账申请的部门审核提交的申请</td>
+		          <td align="center" valign="middle">申请通过</td>
+	            </tr>
+		        <tr>
+		          <td>&nbsp;</td>
+		          <td>&nbsp;</td>
+		          <td>&nbsp;</td>
+	            </tr>
+                <tr>
+		          <td>&nbsp;</td>
+		          <td id = “Fund_apply_submitted”>&nbsp;</td>
+		          <td>&nbsp;</td>
+	            </tr>
+			  <div>
+		        <tr>
+		          <td>&nbsp;</td>
+		          <td id="reim_to">接收申请部门：&nbsp;&nbsp;&nbsp;&nbsp;{{reim_to}}</td>
+		          <td>&nbsp;</td>
+	            </tr>
+		        <tr>
+		          <td>&nbsp;</td>
+                    <td id = "fund_for_dp">举办活动部门：&nbsp;&nbsp;&nbsp;&nbsp;{{fund_for_dp}}</td>
+		          <td>&nbsp;</td>
+
+	            </tr>
+		        <tr>
+		          <td>&nbsp;</td>
+		          <td id = "fund_for_act">使用资金活动：&nbsp;&nbsp;&nbsp;&nbsp;{{ fund_for_act }}</td>
+		          <td>&nbsp;</td>
+	            </tr>
+		        <tr>
+		          <td>&nbsp;</td>
+		          <td id = "fund_pincharge">报账申请人学号：{{ fund_pincharge }}</td>
+		          <td>&nbsp;</td>
+	            </tr>
+		        <tr>
+		          <td>&nbsp;</td>
+		          <td id = "stu_name">报账申请人姓名：{{ stu_name }}</td>
+		          <td>&nbsp;</td>
+	            </tr>
+		        <tr>
+		          <td>&nbsp;</td>
+		          <td>报账金额：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ reim_amount }}</td>
+		          <td>&nbsp;</td>
+	            </tr>
+		        <tr>
+		          <td>&nbsp;</td>
+		          <td>资金用于的事项：{{ fund_for_matt }}</td>
+		          <td>&nbsp;</td>
+	            </tr>
+		        <tr>
+		          <td>&nbsp;</td>
+		          <td>&nbsp;</td>
+		          <td>&nbsp;</td>
+	            </tr>
+			  </div>
+		        <tr>
+		          <td>&nbsp;</td>
+		          <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" name="btnSubmit" value="待通过审核"></td>
+		          <td>&nbsp;</td>
+	            </tr>
+			  <tr>
+				  <td>&nbsp;</td>
+				  <td></td>
+				  <td>&nbsp;</td>
+			  </tr>
+			  <tr>
+				  <td>&nbsp;</td>
+				  <td></td>
+				  <td>&nbsp;</td>
+			  </tr>
+          </table>
+	  </article>
+	</div>
+</section>
+{% endblock body %}

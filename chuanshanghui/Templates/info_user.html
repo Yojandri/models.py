@@ -1,0 +1,74 @@
+﻿{% extends '#base.html' %}
+{% block title %}个人中心{% endblock title %}
+{% block body %}
+<section class="Hui-article-box">
+	<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i>首页<span class="c-gray en">&gt;</span><span class="maincolor">个人中心</span></nav>
+	<div class="Hui-article">
+		<div class="userInfo">
+			<p class="userInfo_title1">个人信息:</p>
+            <table class="userInfo_table">
+                <tr class="userInfo_row">
+                    <td class="leftone">姓名:</td>
+                    <td class="rightone">{{ person.stu_name }}</td>
+                </tr>
+                <tr class="userInfo_row">
+                    <td class="leftone">学号:</td>
+                    <td class="rightone">{{ person.stu_num }}</td>
+                </tr>
+                <tr class="userInfo_row">
+                    <td class="leftone">部门:</td>
+                    <td class="rightone">{{ department.dp_name }}</td>
+                </tr>
+                <tr class="userInfo_row">
+                    <td class="leftone">职务:</td>
+                    <td class="rightone">{{ dpmember.stu_post }}</td>
+                </tr>
+                <tr class="userInfo_row">
+                    <td class="leftone">学院:</td>
+                    <td class="rightone">{{ person.stu_college }}</td>
+                </tr>
+                <tr class="userInfo_row">
+                    <td class="leftone">专业:</td>
+                    <td class="rightone">{{ person.stu_major }}</td>
+                </tr>
+                <tr class="userInfo_row">
+                    <td class="leftone">班级:</td>
+                    <td class="rightone">{{ person.stu_class }}</td>
+                </tr>
+                <tr class="userInfo_row">
+                    <td class="leftone">电话:</td>
+                    <td class="rightone">{{ person.stu_phone }}</td>
+                </tr>
+                <tr class="userInfo_row">
+                    <td class="leftone">QQ:</td>
+                    <td class="rightone">{{ person.stu_qq }}</td>
+                </tr>
+                <tr class="userInfo_row">
+                    <td class="leftone">邮箱:</td>
+                    <td class="rightone">{{ person.stu_email}}</td>
+                </tr>
+            </table>
+            <div class="userInfo_change">
+                <span><a href="javascript:" onclick="info_changePassword('修改密码','{% url 'chuanshanghui:changePwd' %}','800','500') " class="changePassword btn radius"><i class="Hui-iconfont">&#xe63f;</i>修改密码</a></span>
+                <br>
+                <br>
+                <span><a href="javascript:" onclick="info_changeInfo('修改信息','/chuanshanghui/info_changeInfo/','800','500') " class="changeInfo btn radius"><i class="Hui-iconfont">&#xe60c;</i>修改信息</a></span>
+            </div>
+		<footer class="footer">
+			<p>四川大学公共管理学院团委学生会</p>
+		</footer>
+	    </div>
+    </div>
+</section>
+{% endblock body %}
+
+{% block yewu_js %}
+/*个人信息-修改密码*/
+function info_changePassword(title,url,w,h){
+	layer_show(title,url,w,h);
+}
+/*个人信息-修改信息*/
+function info_changeInfo(title,url,w,h){
+    layer_show(title,url,w,h);
+}
+{% endblock yewu_js %}

@@ -1,0 +1,153 @@
+{% extends '#base_layer.html' %}
+{% block title %}添加部门{% endblock title %}
+{% block body %}
+<article class="cl pd-20">
+	<form action="" method="post" class="form form-horizontal" id="form-admin-add">
+        {% csrf_token %}<!--防止跨站伪造-->
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>学号：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input  name="stunum" type="text" class="input-text" autocomplete="off" value="" placeholder="输入学生学号" id="stunum">
+                <span>{{ error1 }}</span>
+			</div>
+		</div>
+        <div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>部门：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input  name="dpnum" type="text" class="input-text" autocomplete="off" value="" placeholder="输入部门编号" id="stunum">
+                <span>{{ error2 }}</span>
+			</div>
+		</div>
+        <div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>职位：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input  name="stupost" type="text" class="input-text" autocomplete="off" value="" placeholder="输入职位" id="stunum">
+                <span>{{ error3 }}</span>
+			</div>
+		</div>
+        <!--下拉框无法提交数据
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">部门：</label>
+			<div class="formControls col-xs-8 col-sm-9"> <span class="select-box" style="width:150px;">
+				<select name="dpnum" class="select" type="text" size="1"><span>{{ error2 }}</span>
+                    <option value="0">选择部门</option>
+					<option value="01">组织部</option>
+					<option value="02">创业就业促进部</option>
+                    <option value="03">朝阳青年志愿者服务队</option>
+                    <option value="04">社团联合会</option>
+                    <option value="05">文体部</option>
+                    <option value="06">宣传部</option>
+                    <option value="07">学术科技部</option>
+                    <option value="08">办公室</option>
+                    <option value="09">学习部</option>
+                    <option value="10">公关部</option>
+                    <option value="11">外联部</option>
+                    <option value="12">素质拓展中心</option>
+                    <option value="13">权益部</option>
+                    <option value="14">艺术团</option>
+				</select>
+				</span> </div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">职位：</label>
+			<div class="formControls col-xs-8 col-sm-9"> <span class="select-box" style="width:150px;">
+				<select name="stupost" class="select" size="1"><span>{{ error3 }}</span>
+                    <option value="0">选择职位</option>
+					<option value="部长">部长</option>
+					<option value="副部长">副部长</option>
+					<option value="干事">干事</option>
+				</select>
+				</span> </div>
+		</div>
+        -->
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+				<input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+			</div>
+		</div>
+		<!--<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>姓名：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="" placeholder="姓名" id="stu_name" name="stu_name">
+			</div>
+		</div>-->
+		<!--<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>性别：</label>
+			<div class="formControls col-xs-8 col-sm-9 skin-minimal">
+				<div class="radio-box">
+					<input name="stu_sex" type="radio" id="sex-1" checked>
+					<label for="sex-1">男</label>
+				</div>
+				<div class="radio-box">
+					<input type="radio" id="sex-2" name="stu_sex">
+					<label for="sex-2">女</label>
+				</div>
+			</div>
+		</div>-->
+		<!--<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">专业：</label>
+			<div class="formControls col-xs-8 col-sm-9"> <span class="select-box" style="width:150px;">
+				<select class="select" name="stu_major" size="1">
+					<option value="0">信息管理与信息系统</option>
+					<option value="1">行政管理</option>
+					<option value="2">土地管理</option>
+					<option value="3">劳动与社会保障</option>
+					<option value="4">社会工作</option>
+					<option value="5">档案学</option>
+					<option value="6">信息资源管理</option>
+				</select>
+				</span> </div>
+		</div>-->
+	</form>
+</article>
+
+<!--请在下方写此页面业务相关的脚本-->
+{% block yewu_js %}
+<script type="text/javascript" src="/static/lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="/static/lib/datatables/1.10.15/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="/static/lib/laypage/1.2/laypage.js"></script>
+<script type="text/javascript">
+$(function(){
+	$('.skin-minimal input').iCheck({
+		checkboxClass: 'icheckbox-blue',
+		radioClass: 'iradio-blue',
+		increaseArea: '20%'
+	});
+	
+	$("#form-admin-add").validate({
+		rules:{
+			stu_name:{
+				required:true,
+				minlength:1,
+				maxlength:16
+			},
+			stu_sex:{
+				required:true,
+			},
+			stu_phone:{
+				required:true,
+				isPhone:true,
+			},
+			stu_post:{
+				required:true,
+			},
+			dp_name:{
+				required:true,
+			},
+		},
+		onkeyup:false,
+		focusCleanup:true,
+		success:"valid",
+		submitHandler:function(form){
+			$(form).ajaxSubmit();
+			var index = parent.layer.getFrameIndex(window.name);
+			parent.$('.btn-refresh').click();
+			parent.layer.close(index);
+		}
+	});
+});
+</script>
+{% endblock yewu_js %}
+
+    <!--/请在上方写此页面业务相关的脚本#-->
+{% endblock body %}

@@ -1,0 +1,23 @@
+﻿{% extends '#base.html' %}
+{% block title %}{{ article.article_name }}{% endblock title %}
+{% block body %}
+<section class="Hui-article-box">
+    <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i>首页<span class="c-gray en">&gt;</span><span class="maincolor">资讯详情</span></nav>
+    <div class="Hui-article">
+        <div style="margin:20px;border:1px solid #EEEEEE">
+        <div style="margin:20px">
+            <p style="font-size: 20px;font-weight:bold;text-align: center">{{ article.article_name }}</p>
+        </div>
+        <div style="margin:20px">
+            <p style="font-size: 12px;text-align: center">发布者：{{ department.dp_name }}</p>
+        </div>
+        <div style="margin:20px">
+            <p style="font-size: 12px;text-align: center">更新时间：{{ article.article_update_time }}</p>
+        </div>
+        <div style="margin:20px; padding:20px;text-align: center;border-top: 1px solid #EEEEEE ">{{ article.article_content|safe }}</div>
+    </div>
+    </div>
+</section>
+{% endblock body %}
+{% block yewu_js %}
+{% endblock yewu_js %}

@@ -1,0 +1,49 @@
+{% extends '#base_layer.html' %}
+{% block title %}场地申请{% endblock title %}
+{% block body %}
+            <form name="frmUserReg" method="POST" action= {% url "chuanshanghui:classroom_apply_state_create" %} >
+			<div class="Hui-article">
+			<article class="cl pd-20">
+                {% csrf_token %}
+			<h1 align="center">场地申请</h1>
+				<p><font color="red">以下内容请如实填写，其中带有*号的栏目是必须填写的</font>
+                <p><label for="room_for_dp">*举办活动部门：</label>
+				<select name="room_for_dp" required>
+					<option value="01">组织部</option>
+					<option value="02">创业就业促进部</option>
+					<option value="03">朝阳青年志愿者服务队</option>
+					<option value="04">社团联合会</option>
+					<option value="05">文体部</option>
+					<option value="06">宣传部</option>
+					<option value="07">学术科技部</option>
+					<option value="08">办公室</option>
+					<option value="09">学习部</option>
+					<option value="10">公关部</option>
+					<option value="11">外联部</option>
+					<option value="12">素质拓展中心社团联合会</option>
+					<option value="13">权益部</option>
+					<option value="14">艺术团</option>
+				</select>
+
+                <p><label for="room_pinchrage">*请输入教室申请人学号：</label>
+				<input type="text" name="room_pinchrage" size="15" maxlength="11" required>
+
+                <p><lable for="room_for_matt">*请填写教室使用事项：</lable>
+				<p>
+				<textarea name="room_for_matt" rows="5" cols="40" >不超过200个字
+				</textarea>
+                <br>
+				<p align="center">
+					<input type="submit" name="btnSubmit" value="确认提交" onclick = "alert_info()" >
+				</p>
+				<p align="center">
+					<input type="reset" name="btnReset" value="&nbsp;&nbsp;&nbsp;重置&nbsp;&nbsp;&nbsp; " size = "4">
+				</p>
+            </article>
+            </div>,
+            </form>
+
+{% endblock body %}
+{% if result %}
+    <p style = 'text-align: center;color: green'>提交教室申请成功！</p>
+{% endif %}
