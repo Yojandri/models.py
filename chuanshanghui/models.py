@@ -52,9 +52,9 @@ class ActivityInfo(models.Model):
 
 class DpMembers(models.Model):
     # 部门成员信息
-    dp_num_id = models.CharField(max_length=2)  #models.ForeignKey(to='Department',  on_delete=models.CASCADE)  # 部门编号 to_field='dp_num',
+    dp_num = models.ForeignKey(to='Department',  on_delete=models.CASCADE)  # 部门编号 to_field='dp_num',models.CharField(max_length=2)  #
     # 部门成员学号
-    stu_num = models.IntegerField(primary_key=True)  #  OneToOneField to_field='stu_num',
+    stu_num = models.ForeignKey(to="People", primary_key=True, on_delete=models.CASCADE)  # OneToOneField to_field='stu_num',
     stu_post = models.CharField(max_length=6)  # 部门成员职务
 
 
