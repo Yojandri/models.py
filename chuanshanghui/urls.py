@@ -28,7 +28,7 @@ urlpatterns = [
     path('money_list/', views.money_list, name="money_list"),
     # 2020-12-07 辜丽娟
     path('money_look/', views.money_look, name='money_look'),
-    path('del_moneylook/', views.del_moneylook, name='del_moneylook'),
+    path('del_moneylook/',  views.del_moneylook, name='del_moneylook'),
     path('money_apply/', views.money_apply, name='money_apply'),
     path('money_list/', views.money_list, name="money_list"),
     path('classroom_list/', views.classroom_list, name="classroom_list"),
