@@ -735,6 +735,7 @@ def money_look(request):  # 展示资金明细
     all_goodslist =Goodslist.objects.all().order_by('Goods_num')  # 获取活动信息（单表）;降序
     return render(request, 'money-look.html', { 'all_goodslist': all_goodslist})  # 暂时只能实现单表查询
 
+
 def del_moneylook(request):   # 删除部门成员信息
     id = request.GET.get('id')
     Goodslist.objects.get(pk=id).delete( )
