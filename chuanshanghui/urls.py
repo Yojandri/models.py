@@ -22,6 +22,7 @@ urlpatterns = [
     path('fund_apply_list/fund_apply_singleDel/', views.fund_apply_singleDel, name='fund_apply_singleDel'),
     path('fund_apply_list/fund_apply_AllDel/', views.fund_apply_AllDel, name='fund_apply_AllDel'),
     path('fund_apply_list/queryByName/',views.queryByName, name='queryByName'),
+    path("fund_apply_list/banggongshi_checkFundApply/",views.banggongshi_checkFundApply, name='banggongshi_checkFundApply'),
     path('admin_list/', views.admin_list, name="admin_list"),
     path('admin_add/', views.admin_add, name="admin_add"),
     path('money_add/', views.money_add, name='money_add'),

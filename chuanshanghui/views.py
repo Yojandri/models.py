@@ -377,7 +377,7 @@ def fundapply_check(request):
 
 def fund_apply_state(request):
     nid = request.GET.get("nid")
-    conn = pymysql.connect(host="127.0.0.1", port=3309, user="root", password="022749@Yj", db='student_union_',
+    conn = pymysql.connect(host="127.0.0.1", port=3309, user="root", password="022749@Yj", db='20201210',
                            charset='utf8')
     cursor = conn.cursor(cursor=pymysql.cursors.DictCursor)
     cursor.execute("SELECT * FROM chuanshanghui_fundrecord WHERE fund_num = %s", [nid])
@@ -389,7 +389,7 @@ def fund_apply_state(request):
 
     cursor.execute("SELECT * FROM chuanshanghui_reimbursement WHERE reim_num = %s", [reim_num])
     reimbursement = cursor.fetchall()
-    print(reimbursement)
+    # print(reimbursement)
     reim_to = reimbursement[0]['reim_to_id']
     fundpincharge = reimbursement[0]['fund_pinchrage']
 
@@ -401,7 +401,7 @@ def fund_apply_state(request):
     adp = Department.objects.get(dp_num=fund_for_dp_id)
     bdp = Department.objects.get(dp_num=reim_to)
     return render(request, "_fundapply_check_ok.html", {'fundrecord': fundrecord,
-                                                        'reimbursement': reimbursement,
+                                                        'reimbursement': reimbursement[0],
                                                         'stu': stu,
                                                         'act': act,
                                                         'adp': adp,
@@ -438,7 +438,7 @@ def fund_apply_list(request):
         # 如果本来就未登录，也就没有登出一说
         return redirect("/chuanshanghui/login/")
     # 连接数据库，利用SQL查询语句获取后端数据库
-    conn = pymysql.connect(host="127.0.0.1", port=3309, user="root", password="022749@Yj",db='20201207', charset='utf8')
+    conn = pymysql.connect(host="127.0.0.1", port=3309, user="root", password="022749@Yj",db='20201210', charset='utf8')
     cursor = conn.cursor(cursor=pymysql.cursors.DictCursor)
     cursor.execute("""
     select DISTINCT 
@@ -502,7 +502,7 @@ def queryByName(request):  # 2020-12-05 创建该函数
         if request.method == 'POST':
             dp_Name = request.POST.get("dp_Name")
             # 连接数据库，利用SQL查询语句获取后端数据库
-            conn = pymysql.connect(host="127.0.0.1", port=3309, user="root", password="022749@Yj", db='student_union_',
+            conn = pymysql.connect(host="127.0.0.1", port=3309, user="root", password="022749@Yj", db='20201210',
                                    charset='utf8')
             cursor = conn.cursor(cursor=pymysql.cursors.DictCursor)
             cursor.execute("""
@@ -573,7 +573,7 @@ def fund_apply_singleDel(request):
     try:
         if request.method == "GET" and request.GET:
             nid = request.GET.get("nid")
-            conn = pymysql.connect(host="127.0.0.1", port=3309, user="root", password="022749@Yj", db='student_union_',
+            conn = pymysql.connect(host="127.0.0.1", port=3309, user="root", password="022749@Yj", db='20201210',
                                    charset='utf8')
             cursor = conn.cursor(cursor=pymysql.cursors.DictCursor)
 
@@ -603,7 +603,7 @@ def fund_apply_AllDel(request):  # 批量删除
             count = request.GET.get('count')
             print(count)
             # 建立数据库连接
-            conn = pymysql.connect(host="127.0.0.1", port=3309, user="root", password="022749@Yj", db='20201207',
+            conn = pymysql.connect(host="127.0.0.1", port=3309, user="root", password="022749@Yj", db='20201210',
                                    charset='utf8')
             # 建立索引
             cursor = conn.cursor(cursor=pymysql.cursors.DictCursor)
@@ -654,7 +654,19 @@ def fund_apply_AllDel(request):  # 批量删除
         return HttpResponse('''删除数据出错！''')
 
 
+def banggongshi_checkFundApply(request):  # 办公室审核其他部门提交的报账申请
+    usernum = request.session.get('person_num')
+    people = People.objects.filter(stu_num=usernum)
+    person = people.last()
 
+    # 检验登陆状态
+    if not request.session.get('is_login', None):
+        # 如果本来就未登录，也就没有登出一说
+        return redirect("/chuanshanghui/login/")
+    state = '待通过审核'
+    color = "red"
+    return HttpResponse("red!!!!!!")
+    # return render(request, "_fundapply_check_ok.html", {"state": state, 'color': color})
 
 # —————————————————————————————————————————资金管理结束———————————————————————————————————————————
 
@@ -711,6 +723,7 @@ def money_apply(request):
     all_goodslist = Goodslist.objects.all().order_by('Goods_num')  # 获取活动信息（单表）;降序
     return render(request, 'money-apply.html', {'all_goodslist': all_goodslist})  # 暂时只能实现单表查询
 
+
 def money_add(request):
     Goods_name = request.POST.get('Goodsname')
     Goods_price = request.POST.get('Goodsprice')
@@ -733,7 +746,7 @@ def money_look(request):  # 展示资金明细
 
 
 def classroom_list(request):   # 展示教室信息
-    conn = pymysql.connect(host="127.0.0.1", port=3306, user="root", password="Misseriah58262", db='student_union',
+    conn = pymysql.connect(host="127.0.0.1", port=3306, user="root", password="Misseriah58262", db='20201210',
                            charset='utf8')
     cursor = conn.cursor(cursor=pymysql.cursors.DictCursor)
     cursor.execute("SELECT * FROM chuanshanghui_classroom")
@@ -761,12 +774,12 @@ def classroomapply_check(request):
     people = People.objects.filter(stu_num=usernum)
     person = people.last()
 
-    return render(request,'classroomapply_check.html')
-
     # 检验登陆状态
     if not request.session.get('is_login', None):
         # 如果本来就未登录，也就没有登出一说
         return redirect("/chuanshanghui/login/")
+
+    return render(request,'classroomapply_check.html')
 
     # 如果检验通过，则运行下面的代码
 

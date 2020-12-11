@@ -17,19 +17,20 @@
 		          <td>&nbsp;</td>
 	            </tr>
                 <tr>
-		          <td align="center" valign="middle">
-                  <i class="Hui-iconfont">&#xe676;</i>提交申请
+		          <td align="center" valign="middle"><font color="green">
+                      <i class="Hui-iconfont">&#xe676;</i>提交申请</font>
 
                   </td>
-		          <td align="center" valign="middle" >
-                  <i class="Hui-iconfont">&#xe676;</i>审核申请</td>
-		          <td align="center" valign="middle">
-                  <i class="Hui-iconfont">&#xe676;</i>通过申请</td>
+		          <td align="center" valign="middle" ><font color="red">
+                  <i class="Hui-iconfont">&#xe676;</i>审核申请</font>
+                  </td>
+		          <td align="center" valign="middle"><font color="#a9a9a9">
+                      <i class="Hui-iconfont">&#xe676;</i>通过申请</font></td>
                   </tr>
 		        <tr>
-		          <td align="center">需要报账部门填写报账申请表</td>
-		          <td align="center">接收报账申请的部门审核提交的申请</td>
-		          <td align="center" valign="middle">申请通过</td>
+                    <td align="center"><font color="green">需要报账部门填写报账申请表</font></td>
+		          <td align="center"><font color="red"> 接收报账申请的部门审核提交的申请</font></td>
+		          <td align="center" valign="middle"><font color="#a9a9a9">申请通过</font> </td>
 	            </tr>
 		        <tr>
 		          <td>&nbsp;</td>
@@ -76,6 +77,11 @@
 		          <td width="50">资金用于的事项：<b>{{ fundrecord.fund_for_matt }}</b></td>
 		          <td>&nbsp;</td>
 	            </tr>
+                <tr>
+                  <td>&nbsp;</td>
+		          <td width="50">报账申请状态：<b><font color="red">{{ reimbursement.reim_state }}</font></b></td>
+		          <td>&nbsp;</td>
+                 </tr>
 		        <tr>
 		          <td>&nbsp;</td>
 		          <td>&nbsp;</td>
@@ -83,7 +89,15 @@
 	            </tr>
 		        <tr>
 		          <td>&nbsp;</td>
-		          <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" name="btnSubmit" value="已通过审核">&nbsp;</td>
+		          <td>
+                  <div class="cl pd-5 bg-1 bk-gray mt-20">
+				<!--<span class="l"> <a href="javascript:;" onclick="datadel()" class="btn btn-danger radius"><i class="Hui-iconfont">&#xe6e2;</i> 批量删除</a>-->
+                    <a href="javascript:;" onclick="allowfundapply('确认通过','{% url 'chuanshanghui:banggongshi_checkFundApply' %}','400','300')" class="btn btn-primary radius">通过</a>
+                    <a href="{% url 'chuanshanghui:banggongshi_checkFundApply' %}"><button type="button" class="btn btn-primary radius" >不通过</button>
+                    </a>
+                  <span class="r"><!--共有数据：--><strong><!--7--></strong> <!--条--></span>
+                  </div>
+                  </td>
 		          <td>&nbsp;</td>
 	            </tr>
 			  <tr>
@@ -100,4 +114,31 @@
 	  </article>
 	</div>
 </section>
+
+{% block yewu_js %}
+<script type="text/javascript" src="/static/lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="/static/lib/datatables/1.10.15/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="/static/lib/laypage/1.2/laypage.js"></script>
+<script type="text/javascript">
+/*
+	参数解释：
+	title	标题
+	url		请求的url
+	id		需要操作的数据id
+	w		弹出层宽度（缺省调默认值）
+	h		弹出层高度（缺省调默认值）
+*/
+/*通过报账申请*/
+function allow_fundapply(title,url,w,h){
+	layer_show(title,url,w,h);
+}
+/*通过报账申请*/
+function allowfundapply(obj,pk,url){
+	layer.confirm('确认通过吗？',function(url){
+		layer.msg('已通过!',{icon:1,time:1000});
+	});
+}
+</script>
+{% endblock yewu_js %}
 {% endblock body %}
+
