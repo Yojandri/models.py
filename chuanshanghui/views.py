@@ -1,6 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 # Create your views here.
+import json
+
+from django.core.serializers import serialize
 from django.db.models import F, Q
 from django.shortcuts import render, redirect, HttpResponse
 from django.views import View
@@ -187,12 +190,15 @@ def article_read(request):
     usernum = request.session.get('person_num')
     people = People.objects.filter(stu_num=usernum)
     person = people.last()
-    dpmember = (DpMembers.objects.filter(stu_num=usernum)).last()
-    dpnum = dpmember.dp_num_id
-    department = (Department.objects.filter(dp_num=dpnum)).last()
     article_num = request.GET.get('article_num')
     article = Article.objects.get(article_num=article_num)
-    return render(request, 'article_read.html', {'article':article,'person':person,'department':department})
+    dpmembers = DpMembers.objects.get(stu_num=article.stu_num)
+    department = Department.objects.filter(dp_num=dpmembers.dp_num.dp_num).first()
+    hitcount = article.article_hit
+    hitcount += 1
+    article.article_hit = hitcount
+    article.save()
+    return render(request, 'article_read.html', {'article' : article,'person': person, 'department' : department})
 
 
 def logout(request):#退出
@@ -389,7 +395,7 @@ def fund_apply_state(request):
 
     cursor.execute("SELECT * FROM chuanshanghui_reimbursement WHERE reim_num = %s", [reim_num])
     reimbursement = cursor.fetchall()
-    # print(reimbursement)
+    print(reimbursement)
     reim_to = reimbursement[0]['reim_to_id']
     fundpincharge = reimbursement[0]['fund_pinchrage']
 
@@ -401,7 +407,7 @@ def fund_apply_state(request):
     adp = Department.objects.get(dp_num=fund_for_dp_id)
     bdp = Department.objects.get(dp_num=reim_to)
     return render(request, "_fundapply_check_ok.html", {'fundrecord': fundrecord,
-                                                        'reimbursement': reimbursement[0],
+                                                        'reimbursement': reimbursement,
                                                         'stu': stu,
                                                         'act': act,
                                                         'adp': adp,
@@ -573,7 +579,7 @@ def fund_apply_singleDel(request):
     try:
         if request.method == "GET" and request.GET:
             nid = request.GET.get("nid")
-            conn = pymysql.connect(host="127.0.0.1", port=3309, user="root", password="022749@Yj", db='20201210',
+            conn = pymysql.connect(host="127.0.0.1", port=3309, user="root", password="022749@Yj", db='student_union_',
                                    charset='utf8')
             cursor = conn.cursor(cursor=pymysql.cursors.DictCursor)
 
@@ -668,6 +674,7 @@ def banggongshi_checkFundApply(request):  # 办公室审核其他部门提交的
     return HttpResponse("red!!!!!!")
     # return render(request, "_fundapply_check_ok.html", {"state": state, 'color': color})
 
+
 # —————————————————————————————————————————资金管理结束———————————————————————————————————————————
 
 
@@ -723,30 +730,31 @@ def money_apply(request):
     all_goodslist = Goodslist.objects.all().order_by('Goods_num')  # 获取活动信息（单表）;降序
     return render(request, 'money-apply.html', {'all_goodslist': all_goodslist})  # 暂时只能实现单表查询
 
-
-def money_add(request):
-    Goods_name = request.POST.get('Goodsname')
-    Goods_price = request.POST.get('Goodsprice')
-    Goods_qua = request.POST.get('Goodsqua')
-    Goods_total = request.POST.get('Goodstotal')
-    bei_zhu = request.POST.get('bei_zhu')
-    Goods_for_act = request.POST.get('goodsfor_act')
-    goo1 = ActivityInfo.objects.filter(act_num=Goods_for_act)
-    # 数据库操作
-    result = Goodslist(Goods_name=Goods_name, Goods_price=Goods_price, Goods_qua=Goods_qua, Goods_total=Goods_total,beizhu=bei_zhu, Goods_for_act=Goods_for_act)
-    if result:
-        return render(request, 'money-add.html', {'result': 1})
-    else:
-        return HttpResponse('插入失败！')
+def money_add(request):   # 增加新部门成员
+    if request.method == "POST":
+        Goods_for_act = request.POST.get('goodsfor_act')
+        Goods_name = request.POST.get('Goodsname')
+        Goods_price = request.POST.get('Goodsprice')
+        Goods_qua = request.POST.get('Goodsqua')
+        Goods_total = request.POST.get('Goodstotal')
+        bei_zhu = request.POST.get('bei_zhu')
+        Goodslist.objects.create(Goods_for_act=Goods_for_act, Goods_name=Goods_name, Goods_price=Goods_price, Goods_qua=Goods_qua, Goods_total=Goods_total, bei_zhu=bei_zhu)
+        return redirect('chuanshanghui:a_success')
+    return render(request, 'money-add.html')
 
 
 def money_look(request):  # 展示资金明细
     all_goodslist = Goodslist.objects.all().order_by('Goods_num')  # 获取活动信息（单表）;降序
     return render(request, 'money-look.html', {'all_goodslist': all_goodslist})  # 暂时只能实现单表查询
 
+def del_moneylook(request):   # 删除部门成员信息
+    id = request.GET.get('id')
+    Goodslist.objects.get(pk=id).delete( )
+    return redirect('chuanshanghui:money_look' )
+
 
 def classroom_list(request):   # 展示教室信息
-    conn = pymysql.connect(host="127.0.0.1", port=3306, user="root", password="Misseriah58262", db='20201210',
+    conn = pymysql.connect(host="127.0.0.1", port=3306, user="root", password="Misseriah58262", db='student_union',
                            charset='utf8')
     cursor = conn.cursor(cursor=pymysql.cursors.DictCursor)
     cursor.execute("SELECT * FROM chuanshanghui_classroom")
@@ -757,29 +765,31 @@ def classroom_list(request):   # 展示教室信息
 
 
 def classroom_apply(request):
-    Room_num = request.session.get(Classroom.classroom_num)
-    Room_for_dp = request.POST.get("room_for_dp")
-    Room_pincharge = request.POST.get("room_pincharge")
-    Room_for_matt = request.POST.get("room_for_matt")
+    if request.method == "POST":
+        Room_num = request.session.get(Classroom.classroom_num)
+        Room_for_dp = request.POST.get("room_for_dp")
+        Room_pincharge = request.POST.get("room_pincharge")
+        Room_for_matt = request.POST.get("room_for_matt")
+        ClassroomRecord.objects.create(room_num=Room_num, room_for_dp=Room_for_dp, room_pincharge=Room_pincharge, room_for_matt=Room_for_matt)
+        return redirect(to='chuanshuanghui:a_success')
+        Classroom.objects.filter(classroom_borrowif__contains=0).update(classroom_borrowif=1)
+    return render(request, 'classroom_apply.html')
 
-    result = ClassroomRecord(room_num=Room_num, room_for_dp=Room_for_dp, room_pincharge=Room_pincharge, room_for_matt=Room_for_matt)
-    if result:
-        return render(request, 'classroom_apply.html', {'result': 1})
-    else:
-        return HttpResponse('插入失败！')
-
+def classroom_checklist(request):  # 展示活动信息列表
+    all_room_apply_list = ClassroomRecord.objects.all().order_by('room_num')  # 获取活动信息（单表）;降序
+    return render(request, 'classroom_checklist.html', context={'all_room_apply_list': all_room_apply_list})  # 暂时只能实现单表查询
 
 def classroomapply_check(request):
     usernum = request.session.get('person_num')
     people = People.objects.filter(stu_num=usernum)
     person = people.last()
 
+    return render(request,'classroomapply_check.html')
+
     # 检验登陆状态
     if not request.session.get('is_login', None):
         # 如果本来就未登录，也就没有登出一说
         return redirect("/chuanshanghui/login/")
-
-    return render(request,'classroomapply_check.html')
 
     # 如果检验通过，则运行下面的代码
 
@@ -999,6 +1009,37 @@ class ArticleUpdateView(View):
             print(form.errors)
             # 4.2 如果失败,返回渲染了错误信息的html
             return render(request, 'article_detail.html', context={'form': form})
+
+def article_hitcount(request):
+    usernum = request.session.get('person_num')
+    people = People.objects.filter(stu_num=usernum)
+    person = people.last()
+    post = DpMembers.objects.values('stu_post').filter(stu_num=usernum).last()
+    dp_num = DpMembers.objects.values('dp_num').filter(stu_num=usernum)
+    print(datetime.now().time())
+    if post==None:
+        hitcount_list = Article.objects.values('article_name', 'article_hit')
+        hitcount_list = json.dumps(list(hitcount_list))
+        if hitcount_list:
+            return render(request, 'article_hicount.html', {'person': person, 'hitcount_list': hitcount_list})
+        else:
+            return HttpResponse("暂无文章发布")
+    elif post["stu_post"] == "干事":
+        hitcount_list = Article.objects.values('article_name', 'article_hit').filter(stu_num__in=usernum)
+        hitcount_list = json.dumps(list(hitcount_list))
+        if hitcount_list:
+            return render(request, 'article_hicount.html', {'person':person,'hitcount_list':hitcount_list})
+        else:
+            return HttpResponse("暂无文章发布")
+    elif post["stu_post"] == "部长":
+        hitcount_list = Article.objects.values('article_name', 'article_hit').filter(stu_num__dpmembers__dp_num__in=dp_num)
+        hitcount_list = json.dumps(list(hitcount_list))
+        if hitcount_list:
+            return render(request, 'article_hicount.html', {'person': person, 'hitcount_list': hitcount_list})
+        else:
+            return HttpResponse("暂无文章发布")
+
+
 # ——————————————————————————————————————————— 部门管理—————————————————————————————————————————————————————
 # 部门信息管理
 def dpmembers_list(request):    # 展示部门成员信息
@@ -1139,3 +1180,14 @@ def cooperation_add(request):  # 增加任务
 
 def cooperation_read(request):  # 查看详情
     return render(request, 'cooperation_read.html')
+
+
+# ---------------------------------------------权限管理------------------------------------------
+class AuthControlView(View):
+    def get(self, request):
+        usernum = request.session.get('person_num')
+        person = People.objects.filter(stu_num=usernum).last()
+        dps = DpMembers.objects.all().order_by('dp_num','stu_post','stu_num')
+        return render(request, 'auth_list.html', {'person':person,'dps':dps})
+    def post(self, request):
+        pass

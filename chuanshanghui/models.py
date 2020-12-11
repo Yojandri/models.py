@@ -125,14 +125,14 @@ class MatterialRecord(models.Model):
 #     room_borrowif = models.IntegerField()
 
 # ————————————————————————————————————————教室————————————————————————————————————————————————————
+
 class Classroom(models.Model):
     classroom_num = models.CharField(max_length=10, primary_key=True)
     # 教室名
     classroom_cap = models.IntegerField()
     # 教室容量
-    classroom_borrowif = models.IntegerField()
+    classroom_borrowif = models.CharField(max_length=500,choices=(('1','已借用'),('0','可借用')))
     # 教室借用状态
-
 
 class ClassroomRecord(models.Model):
     # 申请id
@@ -142,6 +142,11 @@ class ClassroomRecord(models.Model):
     # 教室申请人
     room_for_dp = models.ForeignKey(to='Department', to_field='dp_num', on_delete=models.PROTECT)
     # 教室借用部门
+    Room_checkif =(
+        ('1','已审核'),
+        ('0','未审核')
+    )
+    room_checkif = models.CharField(max_length=50,verbose_name='审核状态',choices=Room_checkif)
     room_for_matt = models.CharField(max_length=200)
     # 教室使用事项
 
@@ -228,3 +233,4 @@ class Article(models.Model):
     article_update_time = models.DateTimeField('最近更新时间',auto_now=True, null=True)
     article_is_delete = models.BooleanField('逻辑删除', default=False)
     article_appendix = models.FileField('附件上传', null=True, blank=True,upload_to='article_appendix')
+    article_hit = models.IntegerField('访问量', default=0)

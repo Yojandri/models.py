@@ -1,5 +1,5 @@
 ﻿{% extends '#base.html' %}
-{% block title %}报账物资列表{% endblock title %}
+{% block title %}报账资金列表{% endblock title %}
     <!--{% block staticfiles %}
     <script type="text/javascript" src="lib/My97DatePicker/4.8/WdatePicker.js"></script>
     <script type="text/javascript" src="lib/datatables/1.10.15/jquery.dataTables.min.js"></script>
@@ -7,7 +7,14 @@
         <link rel="shortcut icon" href="#"/>
 	{% endblock staticfiles %} -->
 {% block body %}
+<section class="Hui-article-box">
+	<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 资金管理 <span class="c-gray en">&gt;</span> 资金列表 <span class="c-gray en">&gt;</span></nav>
+	<div class="Hui-article">
 		<article class="cl pd-20">
+        	<div class="cl pd-5 bg-1 bk-gray mt-20"> <span class="l">
+                <a href="javascript:" onclick="money_add('添加','{% url 'chuanshanghui:money_add' %}','800','500')" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 添加</a>
+                <!--<a href="fund_apply.html"  class="btn btn-primary radius"> <i class="Hui-iconfont">&#xe600;</i> 提交 </a>-->
+                </span> <span class="r">共计：<strong>{% for goods in all_goodslist %}{{ goods.total }}{% endfor %}</strong> 元</span> </div>
 			<div class="cl pd-5 bg-1 bk-gray mt-20">
                 <span class="l">
 				<table class="table table-border table-bordered table-hover table-bg table-sort">
@@ -21,20 +28,22 @@
 							<th width="100">数量</th>
 							<th width="130">总价</th>
 							<th width="130">备注</th>
-			</tr>
+                            <th width="100">操作</th>
+                        </tr>
 					</thead>
 					<tbody>
                 <!--模板语言all_article-->
                         {% for goods in all_goodslist %}
 						<tr class="text-c">
 							<td><input type="checkbox" value="" name=""></td>
-							<td>{{ forloop.counter }}</td>   <!--循环次数-->
+							<td>{{ goods.Goods_num }}</td>   <!--循环次数-->
 							<td>{{ goods.Goods_for_act_id }}</td>
 							<td>{{ goods.Goods_name }}</td>
                             <td>{{ goods.Goods_price }}</td>
                             <td>{{ goods.Goods_qua }}</td>
                             <td>{{ goods.Goods_total }}</td>
                             <td>{{ goods.beizhu }}</td>
+                            <td><a href="chuanshanghui/del_moneylook/?id={{ goods.Goods_num }}">删除</a> </td>
 						</tr>
                         {% endfor %}
 					</tbody>
@@ -42,6 +51,8 @@
                 </span>
 			</div>
 		</article>
+    </div>
+</section>
 {% endblock body %}
 
 <!--_footer 作为公共模版分离出去-->
@@ -108,7 +119,7 @@ function change_password(title,url,id,w,h){
 	layer_show(title,url,w,h);	
 }
 /*用户-删除*/
-function member_del(obj,id){
+function del_money_look(obj,id){
 	layer.confirm('确认要删除吗？',function(index){
 		$(obj).parents("tr").remove();
 		layer.msg('已删除!',{icon:1,time:1000});

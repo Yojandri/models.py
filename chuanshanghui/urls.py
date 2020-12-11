@@ -29,11 +29,14 @@ urlpatterns = [
     path('money_list/', views.money_list, name="money_list"),
     # 2020-12-07 辜丽娟
     path('money_look/', views.money_look, name='money_look'),
+    path('del_moneylook/',  views.del_moneylook, name='del_moneylook'),
     path('money_apply/', views.money_apply, name='money_apply'),
     path('money_list/', views.money_list, name="money_list"),
     path('classroom_list/', views.classroom_list, name="classroom_list"),
     path('classroom_apply/', views.classroom_apply, name="classroom_apply"),
+    path('classroom_checklist/', views.classroom_checklist, name="classroom_checklist"),
     path('classroom_apply_check/', views.classroomapply_check, name="classroom_apply_check"),
+    path('classroom_apply/_classroomapply_check', views.classroomapply_check, name='classroom_apply_state_create'),
     # 部门成员信息
     path('dpmembers_list/', views.dpmembers_list, name="dpmembers_list"),  # 列表展示
     path('dpmembers_add/', views.dpmembers_add, name="dpmembers_add"),  # 新增
@@ -49,6 +52,7 @@ urlpatterns = [
     path('dp_edit/', views.dp_edit, name="dp_edit"),  # 部门介绍修改
     # path('dp_leaders/', views.dp_leaders, name="dp_leaders"),  # 部长信息展示# 活动信息
     path('article_list/', views.article_list.as_view(), name="article_list"),
+    path('article_hitcount', views.article_hitcount, name="article_hitcount"),
     path('article_delete/', views.ArticleDeleteView.as_view(), name="article_delete"),
     path('artilce_detail/<int:article_num>', views.ArticleUpdateView.as_view(), name='article_detail'),
     path('article_add/', views.ArticleAddView.as_view(), name='article_add'),
@@ -58,5 +62,7 @@ urlpatterns = [
     path('cooperation_alist/', views.cooperation_alist, name="cooperation_alist"),  # 部门对接列表展示发布任务
     path('cooperation_blist/', views.cooperation_blist, name="cooperation_blist"),  # 部门对接列表展示接收任务
     path('cooperation-add/', views.cooperation_add, name="cooperation_add"),  # 新增部门对接任务
-    path('cooperation_read/', views.cooperation_read, name="cooperation_read")  # 展开部门对接任务详细信息]
+    path('cooperation_read/', views.cooperation_read, name="cooperation_read"),  # 展开部门对接任务详细信息]
+    # 权限管理
+    path('auth_control', views.AuthControlView.as_view(), name='auth_control'),
 ]
