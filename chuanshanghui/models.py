@@ -228,3 +228,4 @@ class Article(models.Model):
     article_update_time = models.DateTimeField('最近更新时间',auto_now=True, null=True)
     article_is_delete = models.BooleanField('逻辑删除', default=False)
     article_appendix = models.FileField('附件上传', null=True, blank=True,upload_to='article_appendix')
+    article_hit = models.IntegerField('访问量', default=0)

@@ -1,6 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 # Create your views here.
+import json
+
+from django.core.serializers import serialize
 from django.db.models import F, Q
 from django.shortcuts import render, redirect, HttpResponse
 from django.views import View
@@ -187,11 +190,14 @@ def article_read(request):
     usernum = request.session.get('person_num')
     people = People.objects.filter(stu_num=usernum)
     person = people.last()
-    dpmember = (DpMembers.objects.filter(stu_num=usernum)).last()
-    dpnum = dpmember.dp_num_id
-    department = (Department.objects.filter(dp_num=dpnum)).last()
     article_num = request.GET.get('article_num')
     article = Article.objects.get(article_num=article_num)
+    dpmembers = DpMembers.objects.get(stu_num=article.stu_num)
+    department = Department.objects.filter(dp_num=dpmembers.dp_num.dp_num).first()
+    hitcount = article.article_hit
+    hitcount += 1
+    article.article_hit = hitcount
+    article.save()
     return render(request, 'article_read.html', {'article':article,'person':person,'department':department})
 
 
@@ -986,6 +992,36 @@ class ArticleUpdateView(View):
             print(form.errors)
             # 4.2 如果失败,返回渲染了错误信息的html
             return render(request, 'article_detail.html', context={'form': form})
+
+def article_hitcount(request):
+    usernum = request.session.get('person_num')
+    people = People.objects.filter(stu_num=usernum)
+    person = people.last()
+    post = DpMembers.objects.values('stu_post').filter(stu_num=usernum).last()
+    dp_num = DpMembers.objects.values('dp_num').filter(stu_num=usernum)
+    print(datetime.now().time())
+    if post==None:
+        hitcount_list = Article.objects.values('article_name', 'article_hit')
+        hitcount_list = json.dumps(list(hitcount_list))
+        if hitcount_list:
+            return render(request, 'article_hicount.html', {'person': person, 'hitcount_list': hitcount_list})
+        else:
+            return HttpResponse("暂无文章发布")
+    elif post["stu_post"] == "干事":
+        hitcount_list = Article.objects.values('article_name', 'article_hit').filter(stu_num__in=usernum)
+        hitcount_list = json.dumps(list(hitcount_list))
+        if hitcount_list:
+            return render(request, 'article_hicount.html', {'person':person,'hitcount_list':hitcount_list})
+        else:
+            return HttpResponse("暂无文章发布")
+    elif post["stu_post"] == "部长":
+        hitcount_list = Article.objects.values('article_name', 'article_hit').filter(stu_num__dpmembers__dp_num__in=dp_num)
+        hitcount_list = json.dumps(list(hitcount_list))
+        if hitcount_list:
+            return render(request, 'article_hicount.html', {'person': person, 'hitcount_list': hitcount_list})
+        else:
+            return HttpResponse("暂无文章发布")
+
 # ——————————————————————————————————————————— 部门管理—————————————————————————————————————————————————————
 # 部门信息管理
 def dpmembers_list(request):    # 展示部门成员信息
@@ -1126,3 +1162,13 @@ def cooperation_add(request):  # 增加任务
 
 def cooperation_read(request):  # 查看详情
     return render(request, 'cooperation_read.html')
+
+# ---------------------------------------------权限管理------------------------------------------
+class AuthControlView(View):
+    def get(self, request):
+        usernum = request.session.get('person_num')
+        person = People.objects.filter(stu_num=usernum).last()
+        dps = DpMembers.objects.all().order_by('dp_num','stu_post','stu_num')
+        return render(request, 'auth_list.html', {'person':person,'dps':dps})
+    def post(self, request):
+        pass

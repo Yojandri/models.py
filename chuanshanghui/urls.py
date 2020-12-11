@@ -48,6 +48,7 @@ urlpatterns = [
     path('dp_edit/', views.dp_edit, name="dp_edit"),  # 部门介绍修改
     # path('dp_leaders/', views.dp_leaders, name="dp_leaders"),  # 部长信息展示# 活动信息
     path('article_list/', views.article_list.as_view(), name="article_list"),
+    path('article_hitcount', views.article_hitcount, name="article_hitcount"),
     path('article_delete/', views.ArticleDeleteView.as_view(), name="article_delete"),
     path('artilce_detail/<int:article_num>', views.ArticleUpdateView.as_view(), name='article_detail'),
     path('article_add/', views.ArticleAddView.as_view(), name='article_add'),
@@ -57,5 +58,7 @@ urlpatterns = [
     path('cooperation_alist/', views.cooperation_alist, name="cooperation_alist"),  # 部门对接列表展示发布任务
     path('cooperation_blist/', views.cooperation_blist, name="cooperation_blist"),  # 部门对接列表展示接收任务
     path('cooperation-add/', views.cooperation_add, name="cooperation_add"),  # 新增部门对接任务
-    path('cooperation_read/', views.cooperation_read, name="cooperation_read")  # 展开部门对接任务详细信息]
+    path('cooperation_read/', views.cooperation_read, name="cooperation_read"),  # 展开部门对接任务详细信息]
+    # 权限管理
+    path('auth_control', views.AuthControlView.as_view(), name='auth_control'),
 ]
