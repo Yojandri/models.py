@@ -7,6 +7,7 @@ from django.core.serializers import serialize
 from django.db.models import F, Q
 from django.shortcuts import render, redirect, HttpResponse
 from django.views import View
+
 from chuanshanghui.models import FundRecord, Reimbursement, DpMembers, ActivityInfo, People, Department,Goodslist, Cooperation, Article, ClassroomRecord, Classroom
 from datetime import datetime, timedelta
 from django import forms
@@ -717,26 +718,27 @@ def money_apply(request):
     all_goodslist = Goodslist.objects.all().order_by('Goods_num')  # 获取活动信息（单表）;降序
     return render(request, 'money-apply.html', {'all_goodslist': all_goodslist})  # 暂时只能实现单表查询
 
-def money_add(request):
-    Goods_name = request.POST.get('Goodsname')
-    Goods_price = request.POST.get('Goodsprice')
-    Goods_qua = request.POST.get('Goodsqua')
-    Goods_total = request.POST.get('Goodstotal')
-    bei_zhu = request.POST.get('bei_zhu')
-    Goods_for_act = request.POST.get('goodsfor_act')
-    goo1 = ActivityInfo.objects.filter(act_num=Goods_for_act)
-    # 数据库操作
-    result = Goodslist(Goods_name=Goods_name, Goods_price=Goods_price, Goods_qua=Goods_qua, Goods_total=Goods_total,beizhu=bei_zhu, Goods_for_act=Goods_for_act)
-    if result:
-        return render(request, 'money-add.html', {'result': 1})
-    else:
-        return HttpResponse('插入失败！')
+def money_add(request):   # 增加新部门成员
+    if request.method == "POST":
+        Goods_for_act = request.POST.get('goodsfor_act')
+        Goods_name = request.POST.get('Goodsname')
+        Goods_price = request.POST.get('Goodsprice')
+        Goods_qua = request.POST.get('Goodsqua')
+        Goods_total = request.POST.get('Goodstotal')
+        bei_zhu = request.POST.get('bei_zhu')
+        Goodslist.objects.create(Goods_for_act=Goods_for_act, Goods_name=Goods_name, Goods_price=Goods_price, Goods_qua=Goods_qua, Goods_total=Goods_total, bei_zhu=bei_zhu)
+        return redirect('chuanshanghui:a_success')
+    return render(request, 'money-add.html')
 
 
 def money_look(request):  # 展示资金明细
     all_goodslist = Goodslist.objects.all().order_by('Goods_num')  # 获取活动信息（单表）;降序
     return render(request, 'money-look.html', {'all_goodslist': all_goodslist})  # 暂时只能实现单表查询
 
+def del_moneylook(request):   # 删除部门成员信息
+    id = request.GET.get('id')
+    Goodslist.objects.get(pk=id).delete()
+    return redirect('chuanshanghui:money_look')
 
 def classroom_list(request):   # 展示教室信息
     conn = pymysql.connect(host="127.0.0.1", port=3306, user="root", password="Misseriah58262", db='student_union',
@@ -750,17 +752,19 @@ def classroom_list(request):   # 展示教室信息
 
 
 def classroom_apply(request):
-    Room_num = request.session.get(Classroom.classroom_num)
-    Room_for_dp = request.POST.get("room_for_dp")
-    Room_pincharge = request.POST.get("room_pincharge")
-    Room_for_matt = request.POST.get("room_for_matt")
+    if request.method == "POST":
+        Room_num = request.session.get(Classroom.classroom_num)
+        Room_for_dp = request.POST.get("room_for_dp")
+        Room_pincharge = request.POST.get("room_pincharge")
+        Room_for_matt = request.POST.get("room_for_matt")
+        ClassroomRecord.objects.create(room_num=Room_num, room_for_dp=Room_for_dp, room_pincharge=Room_pincharge, room_for_matt=Room_for_matt)
+        return redirect(to='chuanshuanghui:a_success')
+        Classroom.objects.filter(classroom_borrowif__contains=0).update(classroom_borrowif=1)
+    return render(request, 'classroom_apply.html')
 
-    result = ClassroomRecord(room_num=Room_num, room_for_dp=Room_for_dp, room_pincharge=Room_pincharge, room_for_matt=Room_for_matt)
-    if result:
-        return render(request, 'classroom_apply.html', {'result': 1})
-    else:
-        return HttpResponse('插入失败！')
-
+def classroom_checklist(request):  # 展示活动信息列表
+    all_room_apply_list = ClassroomRecord.objects.all().order_by('room_num')  # 获取活动信息（单表）;降序
+    return render(request, 'classroom_checklist.html', context={'all_room_apply_list': all_room_apply_list})  # 暂时只能实现单表查询
 
 def classroomapply_check(request):
     usernum = request.session.get('person_num')
