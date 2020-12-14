@@ -1,0 +1,111 @@
+{% extends '#base_layer.html' %}
+{% block title %}删除{% endblock title %}
+    {% block staticfiles %}
+    <script type="text/javascript" src="../static/lib/My97DatePicker/4.8/WdatePicker.js"></script>
+    <script type="text/javascript" src="../static/lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+    <script type="text/javascript" src="../static/lib/jquery.validation/1.14.0/validate-methods.js"></script>
+    <script type="text/javascript" src="../static/lib/jquery.validation/1.14.0/messages_zh.js"></script>
+    <script type="text/javascript" src="../static/lib/layer/2.4/layer.js"></script>
+	{% endblock staticfiles %}
+{% block body %}
+{#    <style>#}
+{#    #result{#}
+{#        width:200px;#}
+{#        height:100px;#}
+{#        border:solid 1px #148cf1;#}
+{#    }#}
+{#    </style>#}
+{#    <button>点击发送</button>#}
+{#    <div id="result"></div>#}
+<article class="cl pd-20" align="center">
+	<form action='{% url "chuanshanghui:del_moneylook" %}' method="POST" class="form form-horizontal" id="money_del" align="center" id="money_del">
+	{% csrf_token %}
+{#		<div class="row cl" align="center">#}
+{#			<div class="formControls col-xs-8 col-sm-9" >#}
+                <input type="hidden" id = 'id' name="id"  value="{{ id }}"/>
+                <p align="center" id="goodsname">确认删除？</p>
+        <br>
+{#			</div>#}
+{#            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">#}
+{#        <input type="hidden" name='btn_ok' id="btn_ok" />#}
+{#        <input type="hidden" name='btn_no' id="btn_no" />#}
+                <button class="btn btn-primary radius" id="btn_ok" type="submit" value="delete" name="btn">删除</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                <button class="btn btn-primary radius" id="btn_no" type="submit" value="cancel" name="btn">取消</button>
+{#			</div>#}
+{#		</div>#}
+{#		<div class="row cl" >#}
+{#			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">#}
+{#                <button class="btn btn-primary radius" id="btn" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;" name="提交">删除</button>&nbsp;&nbsp;&nbsp;&nbsp;#}
+{#                <button class="btn btn-primary radius" id="btn" type="submit" value="&nbsp;&nbsp;取消&nbsp;&nbsp;" name="提交">取消</button>#}
+{#			</div>#}
+{#		</div>#}
+	</form>
+</article>
+{% endblock body %}
+
+<script type="text/javascript" >
+{% block yewu_js %}
+    $('#btn_ok').on('click',function(){
+        $.ajax({
+            //1.指定朝后端的哪个地址发送数据
+            url: '{% url 'chuanshanghui:del_moneylook' %}',
+            type: 'POST',
+            data: JSON.stringify({'id':$('#id').val() , 'btn_ok':$('#btn_ok').val(), 'btn_no':$('#btn_no').val()}),
+            mimeType: "multipart/form-data", //告诉jQuery不要处理发送的数据，直接发送数据即可
+            async : false,
+            success: function(data){  // data形参指代的就是异步提交的返回结果
+                console.log(data)
+                if($('#btn_ok').val() === 'delete'){
+                    alert("删除成功")
+                    window.location.reload();
+                }
+
+            }
+        })
+    })
+    $('#btn_no').on('click',function(){
+        $.ajax({
+            //1.指定朝后端的哪个地址发送数据
+            url: '{% url 'chuanshanghui:del_moneylook' %}',
+            type: 'POST',
+            data: JSON.stringify({'id':$('#id').val()}),
+            mimeType: "multipart/form-data", //告诉jQuery不要处理发送的数据，直接发送数据即可
+            async : false,
+            success: function(data){  // data形参指代的就是异步提交的返回结果
+                console.log(data)
+                if($('#btn_no').val() === 'cancel'){
+                    alert("取消成功！")
+                    window.location.reload();
+                }
+
+            }
+        })
+    })
+
+    {#const btn = document.getElementsByTagName("button")[0]#}
+    {#const result = document.getElementById("result")#}
+    {#btn.onclick = function(){#}
+    {#//#}
+    {#    console.log("test")#}
+    {#    const xhr = new XMLHttpRequest();#}
+    {#    xhr.open("GET","{% url 'chuanshanghui:money_list' %}");#}
+    {#    xhr.send();#}
+    {#    xhr.onreadystatechange = function(){#}
+    {#        if(xhr.readystate === 4){#}
+    {#            if(xhr.status >= 200 && xhr.status < 300){#}
+    {#                console.log(xhr.status);#}
+    {#                console.log("OK!");#}
+    {#                result.innerHTML = "OK!"#}
+    {##}
+    {#            }#}
+    {#        }#}
+    {#    }#}
+    {##}
+    {#}#}
+
+function money_del(title,url,w,h){
+	layer_show(title,url,w,h);
+}
+
+{% endblock yewu_js %}
+</script>

@@ -1,9 +1,15 @@
 {% extends '#base.html' %}
 {% block title %}报账申请{% endblock title %}
+{% block staticfiles %}
+    <script type="text/javascript" src="../static/lib/My97DatePicker/4.8/WdatePicker.js"></script>
+    <script type="text/javascript" src="../static/lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+    <script type="text/javascript" src="../static/lib/jquery.validation/1.14.0/validate-methods.js"></script>
+    <script type="text/javascript" src="../static/lib/jquery.validation/1.14.0/messages_zh.js"></script>
+    <script type="text/javascript" src="../static/lib/layer/2.4/layer.js"></script>
+	{% endblock staticfiles %}
 {% block body %}
     <section class="Hui-article-box">
 		<table align="center" width="10%" border="0">
-            <form enctype="multipart/form-data" name="frmUserReg" method="POST" action= {% url "chuanshanghui:fund_apply_state_create" %} >
                 <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> <a href="{% url 'chuanshanghui:index' %}">首页</a>
 		<span class="c-gray en">&gt;</span>
 		资金管理
@@ -12,77 +18,179 @@
 		<a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a>
 	</nav><div class="Hui-article">
 			<article class="cl pd-20">
-                {% csrf_token %}
-			<h1 align="center">报账申请</h1>
-				<p><font color="red">以下内容请如实填写，其中带有*号的栏目是必须填写的</font>
-                    <p><label for="reim_to">*接收申请部门：</label>
-				<select name="reim_to" required>
+{#            <form enctype="multipart/form-data" name="frmUserReg" method="POST" action= {% url "chuanshanghui:fund_apply_state_create" %} >#}
+{#                {% csrf_token %}#}
+
+{#				<p><font color="red">以下内容请如实填写，其中带有*号的栏目是必须填写的</font>#}
+{#                    <p><label for="reim_to">*接收申请部门：</label>#}
+{#				<select name="reim_to" required>#}
+{#                    {% for row in dp_banggongshi %}#}
+{#					<option value={{ row.dp_num }}>{{ row.dp_name }}</option>#}
+{#                    {% endfor %}#}
+{#				</select>#}
+{#                </p>#}
+
+{#                <p><label for="fund_for_dp">*举办活动部门：</label>#}
+{#				<select name="fund_for_dp" required>#}
+{#                    {% for row in dp_fundfor %}#}
+{#					<option value={{ row.dp_num }}>{{ row.dp_name }}</option>#}
+{#                    {% endfor %}#}
+{#				</select>#}
+
+{#                <p><label for="fund_for_act">*使用资金活动：</label>#}
+{#				<select name="fund_for_act" required>#}
+{#                    {% for row in activity %}#}
+{#					<option value={{ row.act_num }}>{{ row.act_name }}</option>#}
+{#					{% endfor %}#}
+{#				</select>#}
+
+{#                <p><label for="fund_pincharge">*请输入报账申请人学号：</label>#}
+{#				<input type="text" name="fund_pincharge" size="15" maxlength="11" required>#}
+
+{#                <p><label for="stu_name">*请输入报账申请人姓名：</label>#}
+{#				<input type="text" name="stu_name" size="15" required>#}
+
+{#                <p><label for="reim_amount">*报账金额：</label>#}
+{#				<input type="text" name="reim_amount" placeholder="请输入资金的数量" required>（元）#}
+{#                <p><label for="fund_for_matt">*请输入资金用于的事项：</label>#}
+{#				<p>#}
+{#                 {% for row in goodslist %}#}
+{#                        <input type="checkbox" name="fund_for_matt" value="{{ row.Goods_name }}">{{ row.Goods_name }}&nbsp;&nbsp;&nbsp;&nbsp;#}
+{#                 {% endfor %}#}
+{#                <select multiple="true" size="1">#}
+{#                    {% for row in goodslist %}#}
+{#                        <input type="checkbox" name="{{ row.Goods_num }}" value="{{ row.Goods_name }}">{{ row.Goods_name }}/>#}
+{#                    <option name="{{ row.Goods_num }}" value="{{ row.Goods_name }}">{{ row.Goods_name }}</option>#}
+{#                    {% endfor %}#}
+{#                </select>#}
+{#            <br>#}
+{#				<textarea name="fund_for_matt" rows="5" cols="40" placeholder="不超过200个字">#}
+{#				</textarea>#}
+{#                <div id="filePicker"><label for="fund_apply_file">*</label><input type="file" name = "fund_apply_file" value="上传发票" required>上传报账发票（电子发票或发票图片）#}
+{#			    </div>#}
+{#                <br>#}
+
+{#				<p align="center">#}
+{#					<input type="submit" name="btnSubmit" value="确认提交" ><a onclick="submitForm();">#}
+{##}
+{#				<p align="center">#}
+{#					<input type="reset" name="btnReset" value="&nbsp;&nbsp;&nbsp;重置&nbsp;&nbsp;&nbsp; " size = "4">#}
+{#				</p>#}
+{#            </form>#}
+{#            </article>#}
+{#            </div>#}
+
+
+
+				<!--<input type="month" name="日期">-->
+{#		</table>#}
+{#	</section>#}
+    <h1 align="center">报账申请</h1>
+    <div class="row cl">
+    <p>
+        <font color="red">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;以下内容请如实填写，其中带有*号的栏目是必须填写的</font>
+    </p>
+    </div>
+<article class="cl pd-20">
+	<form enctype="multipart/form-data" name="frmUserReg" method="POST" action= '{% url "chuanshanghui:fund_apply_state_create" %}' class="form form-horizontal" id="fundapply">
+	{% csrf_token %}
+    <div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>接收申请部门</label>
+{#			<span class="select-box inline">#}
+            <div class="formControls col-xs-8 col-sm-9">
+				<select name="reim_to" id="reim_to" class="select-box inline" required>
                     {% for row in dp_banggongshi %}
 					<option value={{ row.dp_num }}>{{ row.dp_name }}</option>
                     {% endfor %}
 				</select>
-                </p>
-
-                <p><label for="fund_for_dp">*举办活动部门：</label>
-				<select name="fund_for_dp" required>
+            </div>
+{#			</span>#}
+    </div>
+    <br>
+    <div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>举办活动部门</label>
+{#			<span class="select-box inline">#}
+            <div class="formControls col-xs-8 col-sm-9">
+				<select name="fund_for_dp" id="fund_for_dp" class="select-box inline" required>
                     {% for row in dp_fundfor %}
 					<option value={{ row.dp_num }}>{{ row.dp_name }}</option>
                     {% endfor %}
 				</select>
-
-                <p><label for="fund_for_act">*使用资金活动：</label>
-				<select name="fund_for_act" required>
-                    {% for row in activity %}
+            </div>
+{#			</span>#}
+		</div>
+    <br>
+    <div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>使用资金的活动：</label>
+{#			<span class="select-box inline">#}
+            <div class="formControls col-xs-8 col-sm-9">
+				<select name="fund_for_act" id="fund_for_act" class="select-box inline" required>
+                   {% for row in activity %}
 					<option value={{ row.act_num }}>{{ row.act_name }}</option>
 					{% endfor %}
 				</select>
-
-                <p><label for="fund_pincharge">*请输入报账申请人学号：</label>
-				<input type="text" name="fund_pincharge" size="15" maxlength="11" required>
-
-                <p><label for="stu_name">*请输入报账申请人姓名：</label>
-				<input type="text" name="stu_name" size="15" required>
-
-                <p><label for="reim_amount">*报账金额：</label>
-				<input type="text" name="reim_amount" placeholder="请输入资金的数量" required>（元）
-                <p><label for="fund_for_matt">*请输入资金用于的事项：</label>
-				<p>
-				<textarea name="fund_for_matt" rows="5" cols="40" placeholder="不超过200个字">
-				</textarea>
-                <div id="filePicker"><label for="fund_apply_file">*</label><input type="file" name = "fund_apply_file" value="上传发票" required>上传报账发票（电子发票或发票图片）
-			    </div>
-                <br>
-
-				<p align="center">
-					<input type="submit" name="btnSubmit" value="确认提交" ><a onclick="submitForm();">
-
-				<p align="center">
-					<input type="reset" name="btnReset" value="&nbsp;&nbsp;&nbsp;重置&nbsp;&nbsp;&nbsp; " size = "4">
-				</p>
-            </article>
             </div>
-            </form>
+{#			</span>#}
+		</div>
+    <br>
 
-
-				<!--<input type="month" name="日期">-->
-		</table>
-	</section>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>请输入报账申请人学号：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+                <input type="text" name="fund_pincharge" id="fund_pincharge" class="input-text" placeholder="请输入学号" size="15" maxlength="11" required style="width: 30%">
+			</div>
+		</div>
+    <br>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3" ><span class="c-red">*</span>请输入报账申请人姓名：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+                <input type="text" name="stu_name" id="stu_name" class="input-text" size="15" placeholder="请输入姓名" required style="width: 30%">
+            </div>
+		</div>
+    <br>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3" ><span class="c-red">*</span>报账金额：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" name="reim_amount" id="reim_amount" class="input-text" placeholder="请输入资金的数量（单位：元）" required style="width: 30%">
+			</div>
+		</div>
+    <br>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">请选择资金用于的事项：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+                {% for row in goodslist %}
+                        <input type="checkbox" name="fund_for_matt" value="{{ row.Goods_name }}">&nbsp;{{ row.Goods_name }}&nbsp;&nbsp;&nbsp;&nbsp;
+                 {% endfor %}
+{#				<textarea name ="fund_for_matt" id="fund_for_matt" class="textarea"  placeholder="备注" onKeyUp="textarealength(this,100)"></textarea>#}
+			</div>
+		</div>
+    <br>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"></label>
+           <div class="formControls col-xs-8 col-sm-9">
+               <input type="text" class="input-text" name="fund_for_matt_plus" placeholder="若有其他事项请在此输入" style="width: 30%; left:100px">
+           </div>
+		</div>
+    <br>
+        <div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">请选择资金用于的事项：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+                <input type="file" class="input-text" name = "fund_apply_file" value="上传发票" required style="width: 35%">&nbsp;&nbsp;&nbsp;&nbsp;上传报账发票（电子发票或发票图片）
+            </div>
+		</div>
+    <br>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <button class="btn btn-primary radius" id="btn" type="submit" value="confirm" name="btn">提交</button>  &nbsp;&nbsp;&nbsp;&nbsp;
+                <button class="btn btn-primary radius" id="btn" type="reset" value="reset" name="btn">重置</button>
+            </div>
+		</div>
+	</form>
+</article>
 {% endblock body %}
-
+<script type="text/javascript" language="JavaScript">
 {% block yewu_js %}
-    <script>
-    function submitForm(){
-        $.ajax({
-            url: 'fund_apply/_fundapply_check',
-            type: "POST",
-            data: $('#frmUserReg').serialize(),
-            success: function(data){
-                console.log(data)
-            }
-        })
-    }
-    </script>
-    <script type="text/javascript" language="JavaScript">
+
 		function deleteJob()
 		{
 		     if(confirm("确定要删除吗?"))
@@ -92,7 +200,38 @@
 		         return false;
 			 }
 		}
-    </script>
-
-
+	$(function(){
+	$("#money-add").validate({
+		rules:{
+			goodsfor_act:{
+				required:true,
+			},
+			Goodsname:{
+				required:true,
+			},
+			Goodsprice:{
+				required:true,
+			},
+			Goodsqua:{
+				required:true,
+			},
+			Goodstotal:{
+				required:true,
+			},
+    		beizhu:{
+				required:true,
+			},
+		},
+		onkeyup:true,
+		focusCleanup:true,
+		success:"valid",
+		submitHandler:function(form){
+			$(form).ajaxSubmit();
+			var index = parent.layer.getFrameIndex(window.name);
+			parent.$('.btn-refresh').click();
+			parent.layer.close(index);
+		}
+	});
+});
 {% endblock yewu_js %}
+</script>

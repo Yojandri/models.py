@@ -1,6 +1,35 @@
-{% extends "#base.html" %}
-{% block title %}保障申请{% endblock title %}
+{% extends '#base.html' %}
+{% block title %}报账申请{% endblock title %}
 {% block body %}
+    <!--遮罩层和显示层样式-->
+{#    <style>#}
+{#     .hide{#}
+{#         display:none;#}
+{#     }#}
+{#     .shadow{#}
+{#         position:fixed;#}
+{#         left:0;#}
+{#         top:0;#}
+{#         right:0;#}
+{#         bottom:0;#}
+{#         background-color:black;#}
+{#         opacity: 0.2;#}
+{#         z-index: 999;#}
+{#     }#}
+{#     .modal{#}
+{#         z-index: 1000;#}
+{#         position: fixed;#}
+{#         left: 50%;#}
+{#         top: 50%;#}
+{#         height: 400px;#}
+{#         width: 300px;#}
+{#         background-color: white;#}
+{#         margin-left: -200px;#}
+{#         margin-top: -150px;#}
+{#         opacity: 1;#}
+{#     }#}
+{#    </style>#}
+
     <section class="Hui-article-box">
 	<nav class="breadcrumb"><i class="Hui-iconfont"></i> <a href="/" class="maincolor">首页</a> <span class="c-999 en">&gt;</span><span class="c-666">报账申请</span></nav>
 	<div class="Hui-article">
@@ -34,7 +63,7 @@
 	            </tr>
 		        <tr>
 		          <td>&nbsp;</td>
-		          <td>&nbsp;</td>
+		          <td>&nbsp;<input type="hidden" name="reim_num" value="{{ reimbursement.reim_num }}"/></td>
 		          <td>&nbsp;</td>
 	            </tr>
                 <tr>
@@ -79,7 +108,7 @@
 	            </tr>
                 <tr>
                   <td>&nbsp;</td>
-		          <td width="50">报账申请状态：<b><font color="red">{{ reimbursement.reim_state }}</font></b></td>
+		          <td width="50">报账申请状态：<input type="hidden" id="reim_state" name="reim_state" value="{{ reimbursement.reim_state }}"><b><font color="{{ color }}">{{ reimbursement.reim_state }}</font></b></td>
 		          <td>&nbsp;</td>
                  </tr>
 		        <tr>
@@ -92,9 +121,8 @@
 		          <td>
                   <div class="cl pd-5 bg-1 bk-gray mt-20">
 				<!--<span class="l"> <a href="javascript:;" onclick="datadel()" class="btn btn-danger radius"><i class="Hui-iconfont">&#xe6e2;</i> 批量删除</a>-->
-                    <a href="javascript:;" onclick="allowfundapply('确认通过','{% url 'chuanshanghui:banggongshi_checkFundApply' %}','400','300')" class="btn btn-primary radius">通过</a>
-                    <a href="{% url 'chuanshanghui:banggongshi_checkFundApply' %}"><button type="button" class="btn btn-primary radius" >不通过</button>
-                    </a>
+                      <input type="hidden" name="reim_num" value="{{ reimbursement.reim_num }}">
+                      <a onclick="check_fundaplly('审核申请','{% url 'chuanshanghui:banggongshi_checkFundApply' %}?nid={{ reimbursement.reim_num }}','Update_reim_state' ,400,300);" > <button type="button" class="btn btn-primary radius" >点击审核</button></a>
                   <span class="r"><!--共有数据：--><strong><!--7--></strong> <!--条--></span>
                   </div>
                   </td>
@@ -113,13 +141,23 @@
           </table>
 	  </article>
 	</div>
+    <!--遮罩层 -->
+    <div id="shadow" class="shadow hide"></div>
+    <!--显示层 -->
+    <div id="modal" class="modal hide">
+        <p>
+            <input id="title" type="text" name="title"/>
+        </p>
+        <h3 align="center">确认通过申请吗？</h3>
+        <input type="hidden" value="{{ reimbursement.reim_state }}" name="reim_state">
+        <input type="button" value="确认" onclick="AjaxSendYes();" />
+        <input type="button" value="取消" onclick="AjaxSendNo();" />
+    </div>
+
 </section>
+{% endblock body %}
 
 {% block yewu_js %}
-<script type="text/javascript" src="/static/lib/My97DatePicker/4.8/WdatePicker.js"></script>
-<script type="text/javascript" src="/static/lib/datatables/1.10.15/jquery.dataTables.min.js"></script>
-<script type="text/javascript" src="/static/lib/laypage/1.2/laypage.js"></script>
-<script type="text/javascript">
 /*
 	参数解释：
 	title	标题
@@ -129,16 +167,55 @@
 	h		弹出层高度（缺省调默认值）
 */
 /*通过报账申请*/
-function allow_fundapply(title,url,w,h){
-	layer_show(title,url,w,h);
+function check_fundaplly(title,url,id,w,h){
+	layer_show(title,url,id,w,h);
 }
-/*通过报账申请*/
-function allowfundapply(obj,pk,url){
-	layer.confirm('确认通过吗？',function(url){
-		layer.msg('已通过!',{icon:1,time:1000});
-	});
-}
-</script>
+{#<script type="text/javascript">#}
+{#function showModal(){#}
+{#    document.getElementById("modal").classList.remove('hide');#}
+{#    document.getElementById("shadow").classList.remove('hide');#}
+{##}
+{#}#}
+{#function cancelModal(){#}
+{#    document.getElementById("shadow").classList.add('hide');#}
+{#    document.getElementById("modal").classList.add("hide");#}
+{#}#}
+{#function AjaxSendYes() {#}
+{#    $.ajax({#}
+{#        url:"{% url 'chuanshanghui:banggongshi_checkFundApply' %}",#}
+{#        type:"POST",#}
+{#        data:{"reim_state":$("#reim_state").val()},#}
+{#        success:function(data){#}
+{#            // 当服务端处理完成后，返回数据时自动调用#}
+{#            // data是服务端返回的值#}
+{#            console.log(data);#}
+{#            if(data =='ok'){#}
+{#                alert("已通过审核！")#}
+{#            }else{#}
+{#                alert("审核不通过！")#}
+{#            }#}
+{#        }#}
+{#    })#}
+{#}#}
+{##}
+{#function AjaxSendNo(){#}
+{#    $.ajax({#}
+{#        url:"{% url 'chuanshanghui:banggongshi_checkFundApply' %}",#}
+{#        type:"POST",#}
+{#        data:{"reim_state":$('#reim_state').val()},#}
+{#        success:function(data){#}
+{#            console.log(data)#}
+{#            if(data == '不ok'){#}
+{#                alert("操作成功")#}
+{#            }#}
+{#        }#}
+{##}
+{#    })#}
+{#}#}
+{##}
+{#function AjaxSend(title,url,w,h){#}
+{#	layer_show(title,url,w,h);#}
+{#}#}
+{#</script>#}
 {% endblock yewu_js %}
-{% endblock body %}
 

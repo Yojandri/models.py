@@ -22,13 +22,20 @@ urlpatterns = [
     path('fund_apply_list/fund_apply_singleDel/', views.fund_apply_singleDel, name='fund_apply_singleDel'),
     path('fund_apply_list/fund_apply_AllDel/', views.fund_apply_AllDel, name='fund_apply_AllDel'),
     path('fund_apply_list/queryByName/',views.queryByName, name='queryByName'),
-    path("fund_apply_list/banggongshi_checkFundApply/",views.banggongshi_checkFundApply, name='banggongshi_checkFundApply'),
+    path('fund_apply_list/queryByDp/', views.queryByDp, name='queryByDp'),
+    path("fund_apply_list/bangongshi_checkFundApply/",views.banggongshi_checkFundApply, name='banggongshi_checkFundApply'),
+    path("fund_appli_list/bangongshi_checkFundApply/allow_apply", views.allow_apply, name='allow_apply'),
+    path("fund_appli_list/bangongshi_checkFundApply/disallow_apply", views.disallow_apply, name='disallow_apply'),
     path('admin_list/', views.admin_list, name="admin_list"),
     path('admin_add/', views.admin_add, name="admin_add"),
     path('money_add/', views.money_add, name='money_add'),
+    # 2020-12-12 杨佳
+    path('money_add_form', views.money_add_form, name='money_add_form'),
+
     path('money_list/', views.money_list, name="money_list"),
     # 2020-12-07 辜丽娟
     path('money_look/', views.money_look, name='money_look'),
+    path('money_look/if_del_money', views.if_del_money, name='if_del_money'),
     path('del_moneylook/',  views.del_moneylook, name='del_moneylook'),
     path('money_apply/', views.money_apply, name='money_apply'),
     path('money_list/', views.money_list, name="money_list"),
