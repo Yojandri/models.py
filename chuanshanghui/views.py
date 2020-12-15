@@ -390,7 +390,7 @@ def fundapply_check(request):
 # 从审核列表点击查看单个报账申请的状态
 def fund_apply_state(request):
     nid = request.GET.get("nid")
-    conn = pymysql.connect(host="127.0.0.1", port=3309, user="root", password="022749@Yj", db='20201210',
+    conn = pymysql.connect(host="127.0.0.1", port=3306, user="root", password="Misseriah58262", db='student_union',
                            charset='utf8')
     cursor = conn.cursor(cursor=pymysql.cursors.DictCursor)
     cursor.execute("SELECT * FROM chuanshanghui_fundrecord WHERE fund_num = %s", [nid])
@@ -459,7 +459,7 @@ def fund_apply_list(request):
         # 如果本来就未登录，也就没有登出一说
         return redirect("/chuanshanghui/login/")
     # 连接数据库，利用SQL查询语句获取后端数据库
-    conn = pymysql.connect(host="127.0.0.1", port=3309, user="root", password="022749@Yj",db='20201210', charset='utf8')
+    conn = pymysql.connect(host="127.0.0.1", port=3306, user="root", password="Misseriah58262",db='student_union', charset='utf8')
     cursor = conn.cursor(cursor=pymysql.cursors.DictCursor)
     cursor.execute("""
     select DISTINCT 
@@ -523,7 +523,7 @@ def queryByName(request):  # 2020-12-05 创建该函数
         if request.method == 'GET':
             dp_Name = request.GET.get("dp_Name")
             # 连接数据库，利用SQL查询语句获取后端数据库
-            conn = pymysql.connect(host="127.0.0.1", port=3309, user="root", password="022749@Yj", db='20201210',
+            conn = pymysql.connect(host="127.0.0.1", port=3306, user="root", password="Misseriah58262", db='student_union',
                                    charset='utf8')
             cursor = conn.cursor(cursor=pymysql.cursors.DictCursor)
             cursor.execute("""
@@ -595,7 +595,7 @@ def queryByDp(request):  # 2020-12-05 创建该函数
         if request.method == 'GET':
             dp = request.GET.get("dp")
             # 连接数据库，利用SQL查询语句获取后端数据库
-            conn = pymysql.connect(host="127.0.0.1", port=3309, user="root", password="022749@Yj", db='20201210',
+            conn = pymysql.connect(host="127.0.0.1", port=3306, user="root", password="Misseriah58262", db='student_union',
                                    charset='utf8')
             cursor = conn.cursor(cursor=pymysql.cursors.DictCursor)
             cursor.execute("""
@@ -666,7 +666,7 @@ def fund_apply_singleDel(request):
     try:
         if request.method == "GET" and request.GET:
             nid = request.GET.get("nid")
-            conn = pymysql.connect(host="127.0.0.1", port=3309, user="root", password="022749@Yj", db='student_union_',
+            conn = pymysql.connect(host="127.0.0.1", port=3306, user="root", password="Misseriah58262", db='student_union_',
                                    charset='utf8')
             cursor = conn.cursor(cursor=pymysql.cursors.DictCursor)
 
@@ -696,7 +696,7 @@ def fund_apply_AllDel(request):  # 批量删除
             count = request.GET.get('count')
             print(count)
             # 建立数据库连接
-            conn = pymysql.connect(host="127.0.0.1", port=3309, user="root", password="022749@Yj", db='20201210',
+            conn = pymysql.connect(host="127.0.0.1", port=3306, user="root", password="Misseriah58262", db='student_union',
                                    charset='utf8')
             # 建立索引
             cursor = conn.cursor(cursor=pymysql.cursors.DictCursor)
@@ -948,7 +948,7 @@ def classroom_apply(request):
         Room_for_dp = request.POST.get('room_for_dp_id')
         Room_pincharge = request.POST.get('room_pincharge_id')
         Room_for_matt = request.POST.get('room_for_matt')
-        ClassroomRecord.objects.create(room_num_id=id, room_for_dp_id=Room_for_dp, room_for_matt=Room_for_matt, room_pincharge_id=Room_pincharge, room_checkif='待审核', commands='无')
+        ClassroomRecord.objects.create(room_num_id=id, room_for_dp_id=Room_for_dp, room_for_matt=Room_for_matt, room_pincharge_id=Room_pincharge, room_checkif='未审核', commands='无')
 #        R=ClassroomRecord()
 #        R.room_for_dp_id=Department.objects.filter(dp_num=Room_for_dp).first()
 #        R.room_num_id=Classroom.objects.filter(classroom_num=id).first()
@@ -956,7 +956,7 @@ def classroom_apply(request):
 #        R.room_for_matt=Room_for_matt
 #        R.save()
         Classroom.objects.filter(classroom_num=id).update(classroom_borrowif='审核中')
-        return redirect('chuanshanghui:a_success')
+        return HttpResponse("<script>alert('操作成功！')</script>")
     return render(request, 'classroom_apply.html', context={'dps': dps, 'rooms': rooms})
 
 
@@ -971,7 +971,7 @@ def classroom_applydel(request):
     id = request.GET.get('id')
     rom = request.GET.get('room')
     room = ClassroomRecord.objects.get(id=id)
-    if room.room_checkif=='已审核'or room.room_checkif=='待审核':
+    if room.room_checkif=='已审核'or room.room_checkif=='未审核':
         Classroom.objects.filter(classroom_num=rom).update(classroom_borrowif='可借用')
     ClassroomRecord.objects.get(id=id).delete( )
     return redirect('chuanshanghui:classroom_applyed' )
@@ -984,15 +984,19 @@ def classroom_checklist(request):
 
 def classroom_viewcheck(request):
     room = request.GET.get('room')
+    id = request.GET.get('id')
     all_room_apply_list = ClassroomRecord.objects.filter(room_num_id=room)
-    return render(request, 'classroom_viewcheck.html', {'all_room_apply_list':all_room_apply_list})
-
+    state=ClassroomRecord.objects.filter(id=id).first().room_checkif
+    if state=='未审核':
+        return render(request, 'classroom_viewcheck.html', {'all_room_apply_list':all_room_apply_list})
+    else:
+        return HttpResponse("<script>alert('发生错误，该申请可能已经通过或驳回')</script>")
 
 def classroom_applypass(request):
     room = request.GET.get('room')
     ClassroomRecord.objects.filter(room_num_id=room).update(room_checkif='已审核')
     Classroom.objects.filter(classroom_num=room).update(classroom_borrowif='已借用')
-    return render(request, 'a_success.html')
+    return HttpResponse("<script>alert('操作成功！')</script>")
 
 
 def classroom_applyfail(request):
@@ -1007,7 +1011,7 @@ def classroom_applyfailb(request):
     ro = request.POST.get('room')
     com = request.POST.get('commands')
     ClassroomRecord.objects.filter(room_num_id=ro).update(commands=com)
-    return render(request, 'a_success.html')
+    return HttpResponse("<script>alert('操作成功！')</script>")
 
 
 # 活动信息展示管理

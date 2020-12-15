@@ -155,6 +155,8 @@ class ClassroomRecord(models.Model):
     room_checkif = models.CharField(max_length=50,verbose_name='审核状态',choices=Room_checkif)
     room_for_matt = models.CharField(max_length=200)
     commands = models.CharField(max_length=200,null=True)
+    def room_check(self):
+        return
     # 教室使用事项
 
 #——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

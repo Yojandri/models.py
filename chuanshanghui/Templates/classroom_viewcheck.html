@@ -6,15 +6,17 @@
     <article class="page-container">
     <h1 align="center">场地审核</h1>
         {% for rm in all_room_apply_list %}
+    <p><label for="id">申请ID：{{ rm.id }}</label>
     <p><label for="room_num">申请教室：{{ rm.room_num_id }}</label>
     <p><label for="room_for_dp">举办活动部门：{{ rm.room_for_dp_id }}</label>
     <p><label for="room_pinchrage">教室申请人学号：{{ rm.room_pincharge_id }}</label>
     <p><lable for="room_for_matt">教室使用事项：{{ rm.room_for_matt }}</lable>
+            <p><label for="room_checkif">教室申请状态：{{ rm.room_checkif }}</label>
     <p align="center">
-        <a href="chuanshanghui/classroom_applypass/?room={{ rm.room_num_id }}"> <input type="submit" value="审核通过" ></a>
+        <a href="chuanshanghui/classroom_applypass/?room={{ rm.room_num_id }}&id={{ rm.id }}"> <input type="submit" value="审核通过" ></a>
     </p>
     <p align="center">
-        <a href="chuanshanghui/classroom_applyfail/?room={{ rm.room_num_id }}"> <input type="submit" value="审核不通过"></a>
+        <a href="chuanshanghui/classroom_applyfail/?room={{ rm.room_num_id }}&id={{ rm.id }}"> <input type="submit" value="审核不通过"></a>
     </p>
         {% endfor %}
     </article>

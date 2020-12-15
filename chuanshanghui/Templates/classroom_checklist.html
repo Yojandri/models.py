@@ -27,13 +27,13 @@
                 <!--模板语言all_article-->
                         {% for room_apply in all_room_apply_list %}
 						<tr class="text-c">
-							<td>{{ forloop.counter }}</td>   <!--循环次数-->
+							<td>{{ room_apply.id }}</td>   <!--循环次数-->
 							<td>{{ room_apply.room_num_id }}</td>
 							<td>{{ room_apply.room_pincharge_id }}</td>
                             <td>{{ room_apply.room_for_dp_id }}</td>
                             <td>{{ room_apply.room_for_matt }}</td>
                             <td>{{ room_apply.room_checkif }}</td>
-							<td class="text-l"><u style="cursor:pointer" class="text-primary"><a href="chuanshanghui/classroom_viewcheck/?room={{ room_apply.room_num_id }}" title="审核">审核</u> </td>
+							<td class="text-l"><u style="cursor:pointer" class="text-primary"><a href="chuanshanghui/classroom_viewcheck/?room={{ room_apply.room_num_id }}&id={{ room_apply.id }}" title="审核">审核</u> </td>
 						</tr>
                         {% endfor %}
 					</tbody>
