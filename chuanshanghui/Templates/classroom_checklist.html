@@ -33,7 +33,7 @@
                             <td>{{ room_apply.room_for_dp_id }}</td>
                             <td>{{ room_apply.room_for_matt }}</td>
                             <td>{{ room_apply.room_checkif }}</td>
-							<td class="text-l"><u style="cursor:pointer" class="text-primary" onClick="classroom_check('审核','{% url 'chuanshanghui:classroom_apply_check' %}','800','500')" title="审核">审核</u> </td>
+							<td class="text-l"><u style="cursor:pointer" class="text-primary"><a href="chuanshanghui/classroom_viewcheck/?room={{ room_apply.room_num_id }}" title="审核">审核</u> </td>
 						</tr>
                         {% endfor %}
 					</tbody>

@@ -127,27 +127,34 @@ class MatterialRecord(models.Model):
 # ————————————————————————————————————————教室————————————————————————————————————————————————————
 
 class Classroom(models.Model):
-    classroom_num = models.CharField(max_length=10, primary_key=True)
+    classroom_num = models.CharField(max_length=255, primary_key=True)
     # 教室名
     classroom_cap = models.IntegerField()
     # 教室容量
-    classroom_borrowif = models.CharField(max_length=500,choices=(('1','已借用'),('0','可借用')))
+    Borrowif={
+        ('已借用','已借用'),
+        ('可借用','可借用'),
+        ('审核中','审核中')
+    }
+    classroom_borrowif = models.CharField(max_length=255,choices=Borrowif)
     # 教室借用状态
 
 class ClassroomRecord(models.Model):
     # 申请id
-    room_num = models.ForeignKey(to='Classroom', to_field='classroom_num', on_delete=models.PROTECT, related_name='room_cap')
+    room_num = models.ForeignKey(to='Classroom', to_field='classroom_num', on_delete=models.PROTECT)
     # 教室名
     room_pincharge = models.ForeignKey(to='DpMembers', to_field='stu_num', on_delete=models.PROTECT)
     # 教室申请人
     room_for_dp = models.ForeignKey(to='Department', to_field='dp_num', on_delete=models.PROTECT)
     # 教室借用部门
     Room_checkif =(
-        ('1','已审核'),
-        ('0','未审核')
+        ('已审核','已审核'),
+        ('未审核','未审核'),
+        ('未通过','未通过')
     )
     room_checkif = models.CharField(max_length=50,verbose_name='审核状态',choices=Room_checkif)
     room_for_matt = models.CharField(max_length=200)
+    commands = models.CharField(max_length=200,null=True)
     # 教室使用事项
 
 #——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
