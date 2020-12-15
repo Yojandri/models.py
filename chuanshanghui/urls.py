@@ -41,9 +41,13 @@ urlpatterns = [
     path('money_list/', views.money_list, name="money_list"),
     path('classroom_list/', views.classroom_list, name="classroom_list"),
     path('classroom_apply/', views.classroom_apply, name="classroom_apply"),
+    path('classroom_applypass/', views.classroom_applypass, name="classroom_applypass"),
+    path('classroom_applyfail/', views.classroom_applyfail, name="classroom_applyfail"),
+    path('classroom_applyfailb/', views.classroom_applyfailb, name="classroom_applyfailb"),
+    path('classroom_applyed/', views.classroom_applyed, name="classroom_applyed"),
+    path('classroom_applydel/', views.classroom_applydel, name="classroom_applydel"),
     path('classroom_checklist/', views.classroom_checklist, name="classroom_checklist"),
-    path('classroom_apply_check/', views.classroomapply_check, name="classroom_apply_check"),
-    path('classroom_apply/_classroomapply_check', views.classroomapply_check, name='classroom_apply_state_create'),
+    path('classroom_viewcheck/', views.classroom_viewcheck, name="classroom_viewcheck"),
     # 部门成员信息
     path('dpmembers_list/', views.dpmembers_list, name="dpmembers_list"),  # 列表展示
     path('dpmembers_add/', views.dpmembers_add, name="dpmembers_add"),  # 新增
