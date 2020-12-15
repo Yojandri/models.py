@@ -22,26 +22,28 @@ urlpatterns = [
     path('fund_apply_list/fund_apply_singleDel/', views.fund_apply_singleDel, name='fund_apply_singleDel'),
     path('fund_apply_list/fund_apply_AllDel/', views.fund_apply_AllDel, name='fund_apply_AllDel'),
     path('fund_apply_list/queryByName/',views.queryByName, name='queryByName'),
+    path('fund_apply_list/queryByDp/', views.queryByDp, name='queryByDp'),
+    path("fund_apply_list/bangongshi_checkFundApply/",views.banggongshi_checkFundApply, name='banggongshi_checkFundApply'),
+    path("fund_appli_list/bangongshi_checkFundApply/allow_apply", views.allow_apply, name='allow_apply'),
+    path("fund_appli_list/bangongshi_checkFundApply/disallow_apply", views.disallow_apply, name='disallow_apply'),
     path('admin_list/', views.admin_list, name="admin_list"),
     path('admin_add/', views.admin_add, name="admin_add"),
     path('money_add/', views.money_add, name='money_add'),
-    path('money_add/money_adds/', views.money_addd, name='money_adds'),
+    # 2020-12-12 杨佳
+    path('money_add_form', views.money_add_form, name='money_add_form'),
+
     path('money_list/', views.money_list, name="money_list"),
     # 2020-12-07 辜丽娟
     path('money_look/', views.money_look, name='money_look'),
+    path('money_look/if_del_money', views.if_del_money, name='if_del_money'),
     path('del_moneylook/',  views.del_moneylook, name='del_moneylook'),
     path('money_apply/', views.money_apply, name='money_apply'),
     path('money_list/', views.money_list, name="money_list"),
     path('classroom_list/', views.classroom_list, name="classroom_list"),
     path('classroom_apply/', views.classroom_apply, name="classroom_apply"),
-    path('classroom_applypass/', views.classroom_applypass, name="classroom_applypass"),
-    path('classroom_applyfail/', views.classroom_applyfail, name="classroom_applyfail"),
-    path('classroom_applyfailb/', views.classroom_applyfailb, name="classroom_applyfailb"),
-    path('classroom_applyed/', views.classroom_applyed, name="classroom_applyed"),
-    path('classroom_applydel/', views.classroom_applydel, name="classroom_applydel"),
     path('classroom_checklist/', views.classroom_checklist, name="classroom_checklist"),
-    path('classroom_viewcheck/', views.classroom_viewcheck, name="classroom_viewcheck"),
-#    path('classroom_apply_check/', views.classroomapply_check, name="classroom_apply_check"),
+    path('classroom_apply_check/', views.classroomapply_check, name="classroom_apply_check"),
+    path('classroom_apply/_classroomapply_check', views.classroomapply_check, name='classroom_apply_state_create'),
     # 部门成员信息
     path('dpmembers_list/', views.dpmembers_list, name="dpmembers_list"),  # 列表展示
     path('dpmembers_add/', views.dpmembers_add, name="dpmembers_add"),  # 新增

@@ -86,11 +86,11 @@ WSGI_APPLICATION = 'djangoProject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'student_union',
+        'NAME': '20201210',
         'HOST': '127.0.0.1',
         'USER': 'root',
-        'PORT': 3306,
-        'PASSWORD': 'Misseriah58262',
+        'PORT': 3309,
+        'PASSWORD': '022749@Yj',
 
             }
 }
@@ -149,9 +149,9 @@ CKEDITOR_BASEPATH = "/chuanshanghui/static/ckeditor/ckeditor/ckeditor/"
 # 配置ckeditor的外观按钮
 CKEDITOR_CONFIGS = {
   'default': {
-    'toolbar': 'full', #工具栏全部功能
-    'height': 300, # 高度
-    'width': 730, # 宽度
+    'toolbar': 'full',  # 工具栏全部功能
+    'height': 300,  # 高度
+    'width': 730,  # 宽度
   },
 }
 

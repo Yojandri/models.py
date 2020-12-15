@@ -1,20 +1,29 @@
 ﻿{% extends '#base.html' %}
 {% block title %}报账资金列表{% endblock title %}
-    <!--{% block staticfiles %}
-    <script type="text/javascript" src="lib/My97DatePicker/4.8/WdatePicker.js"></script>
-    <script type="text/javascript" src="lib/datatables/1.10.15/jquery.dataTables.min.js"></script>
-    <script type="text/javascript" src="lib/laypage/1.2/laypage.js"></script>
-        <link rel="shortcut icon" href="#"/>
-	{% endblock staticfiles %} -->
+    <!-- -->
+{% block staticfiles %}
+    <script type="text/javascript" src="../static/lib/My97DatePicker/4.8/WdatePicker.js"></script>
+    <script type="text/javascript" src="../static/lib/datatables/1.10.15/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="../static/lib/laypage/1.2/laypage.js"></script>
+    <link rel="shortcut icon" href="#"/>
+    <script type="text/javascript" src="../static/lib/jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../static/lib/layer/2.4/layer.js"></script>
+    <script type="text/javascript" src="../static/h-ui/js/H-ui.js"></script>
+    <script type="text/javascript" src="../static/h-ui.admin/js/H-ui.admin.page.js"></script>
+{% endblock staticfiles %}
 {% block body %}
 <section class="Hui-article-box">
-	<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 资金管理 <span class="c-gray en">&gt;</span> 资金列表 <span class="c-gray en">&gt;</span></nav>
+	<nav class="breadcrumb">
+        <i class="Hui-iconfont">&#xe67f;</i> <a href="{% url 'chuanshanghui:index' %}">首页</a>
+        <span class="c-gray en">&gt;</span> 资金管理<span class="c-gray en">&gt;</span>
+        <a href="{% url 'chuanshanghui:money_look' %}">资金列表</a>
+    </nav>
 	<div class="Hui-article">
 		<article class="cl pd-20">
         	<div class="cl pd-5 bg-1 bk-gray mt-20"> <span class="l">
-                <a href="javascript:" onclick="money_add('添加','{% url 'chuanshanghui:money_add' %}','800','500')" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 添加</a>
+                <a href="javascript:" onclick="money_add('添加','{% url 'chuanshanghui:money_add_form' %}','800','500')" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 添加</a>
                 <!--<a href="fund_apply.html"  class="btn btn-primary radius"> <i class="Hui-iconfont">&#xe600;</i> 提交 </a>-->
-                </span> <span class="r">共计：<strong>{% for goods in all_goodslist %}{{ goods.total }}{% endfor %}</strong> 元</span> </div>
+            </span> <span class="r">共计：{{ count_money }}元</span><span class="r">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="r">共计：{{ count }}项</span> </div>
 			<div class="cl pd-5 bg-1 bk-gray mt-20">
                 <span class="l">
 				<table class="table table-border table-bordered table-hover table-bg table-sort">
@@ -36,88 +45,94 @@
                         {% for goods in all_goodslist %}
 						<tr class="text-c">
 							<td><input type="checkbox" value="" name=""></td>
-							<td>{{ goods.Goods_num }}</td>   <!--循环次数-->
+							<td>{{ goods.Goods_num }}</td>
 							<td>{{ goods.Goods_for_act_id }}</td>
 							<td>{{ goods.Goods_name }}</td>
                             <td>{{ goods.Goods_price }}</td>
                             <td>{{ goods.Goods_qua }}</td>
                             <td>{{ goods.Goods_total }}</td>
                             <td>{{ goods.beizhu }}</td>
-                            <td><a href="chuanshanghui/del_moneylook/?id={{ goods.Goods_num }}">删除</a> </td>
+                            <td><a onclick="money_del('删除','{% url 'chuanshanghui:if_del_money' %}?id={{ goods.Goods_num }}','300','200')">删除</a> </td>
 						</tr>
                         {% endfor %}
 					</tbody>
 				</table>
                 </span>
 			</div>
+        <br>
+            <div>
+                {{ page_info.pager|safe }}
+            </div>
 		</article>
     </div>
 </section>
 {% endblock body %}
 
 <!--_footer 作为公共模版分离出去-->
-<script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script> 
-<script type="text/javascript" src="lib/layer/2.4/layer.js"></script>
-<script type="text/javascript" src="static/h-ui/js/H-ui.js"></script> 
-<script type="text/javascript" src="static/h-ui.admin/js/H-ui.admin.page.js"></script>
 <!--/_footer /作为公共模版分离出去-->
 
 <!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript">
     {% block yewu_js %}
-$(function(){
-	$('.table-sort').dataTable({
-		"aaSorting": [[ 1, "desc" ]],//默认第几个排序
-		"bStateSave": true,//状态保存
-		"aoColumnDefs": [
-		  //{"bVisible": false, "aTargets": [ 3 ]} //控制列的隐藏显示
-		  {"orderable":false,"aTargets":[0,8,9]}// 制定列不参与排序
-		]
-	});
-	$('.table-sort tbody').on( 'click', 'tr', function () {
-		if ( $(this).hasClass('selected') ) {
-			$(this).removeClass('selected');
-		}
-		else {
-			table.$('tr.selected').removeClass('selected');
-			$(this).addClass('selected');
-		}
-	});
-});
+        {#$(function(){#}
+{#	$('.table-sort').dataTable({#}
+{#		"aaSorting": [[ 1, "desc" ]],//默认第几个排序#}
+{#		"bStateSave": true,//状态保存#}
+{#		"aoColumnDefs": [#}
+{#		  //{"bVisible": false, "aTargets": [ 3 ]} //控制列的隐藏显示#}
+{#		  {"orderable":false,"aTargets":[0,8,9]}// 制定列不参与排序#}
+{#		]#}
+{#	});#}
+{#	$('.table-sort tbody').on( 'click', 'tr', function () {#}
+{#		if ( $(this).hasClass('selected') ) {#}
+{#			$(this).removeClass('selected');#}
+{#		}#}
+{#		else {#}
+{#			table.$('tr.selected').removeClass('selected');#}
+{#			$(this).addClass('selected');#}
+{#		}#}
+{#	});#}
+{# });#}
 /*添加*/
+
 function money_add(title,url,w,h){
 	layer_show(title,url,w,h);
 }
-/*用户-查看*/
-function member_show(title,url,id,w,h){
+
+function money_del(title,url,w,h){
 	layer_show(title,url,w,h);
 }
+/*用户-查看*/
+{#function member_show(title,url,id,w,h){#}
+{#	layer_show(title,url,w,h);#}
+{#}#}
 /*用户-停用*/
-function member_stop(obj,id){
-	layer.confirm('确认要停用吗？',function(index){
-		$(obj).parents("tr").find(".td-manage").prepend('<a style="text-decoration:none" onClick="member_start(this,id)" href="javascript:;" title="启用"><i class="Hui-iconfont">&#xe6e1;</i></a>');
-		$(obj).parents("tr").find(".td-status").html('<span class="label label-defaunt radius">已停用</span>');
-		$(obj).remove();
-		layer.msg('已停用!',{icon: 5,time:1000});
-	});
-}
+{#function member_stop(obj,id){#}
+{#	layer.confirm('确认要停用吗？',function(index){#}
+{#		$(obj).parents("tr").find(".td-manage").prepend('<a style="text-decoration:none" onClick="member_start(this,id)" href="javascript:;" title="启用"><i class="Hui-iconfont">&#xe6e1;</i></a>');#}
+{#		$(obj).parents("tr").find(".td-status").html('<span class="label label-defaunt radius">已停用</span>');#}
+{#		$(obj).remove();#}
+{#		layer.msg('已停用!',{icon: 5,time:1000});#}
+{#	});#}
+{#}#}
 
 /*用户-启用*/
-function member_start(obj,id){
-	layer.confirm('确认要启用吗？',function(index){
-		$(obj).parents("tr").find(".td-manage").prepend('<a style="text-decoration:none" onClick="member_stop(this,id)" href="javascript:;" title="停用"><i class="Hui-iconfont">&#xe631;</i></a>');
-		$(obj).parents("tr").find(".td-status").html('<span class="label label-success radius">已启用</span>');
-		$(obj).remove();
-		layer.msg('已启用!',{icon: 6,time:1000});
-	});
-}
-/*用户-编辑*/
-function money_edit(title,url,id,w,h){
-	layer_show(title,url,w,h);
-}
-/*密码-修改*/
-function change_password(title,url,id,w,h){
-	layer_show(title,url,w,h);	
-}
+{#function member_start(obj,id){#}
+{#	layer.confirm('确认要启用吗？',function(index){#}
+{#		$(obj).parents("tr").find(".td-manage").prepend('<a style="text-decoration:none" onClick="member_stop(this,id)" href="javascript:;" title="停用"><i class="Hui-iconfont">&#xe631;</i></a>');#}
+{#		$(obj).parents("tr").find(".td-status").html('<span class="label label-success radius">已启用</span>');#}
+{#		$(obj).remove();#}
+{#		layer.msg('已启用!',{icon: 6,time:1000});#}
+{#	});#}
+{#}#}
+{#/*用户-编辑*/#}
+{#function money_edit(title,url,id,w,h){#}
+{#	layer_show(title,url,w,h);#}
+{#}#}
+{#/*密码-修改*/#}
+{#function change_password(title,url,id,w,h){#}
+{#	layer_show(title,url,w,h);#}
+{#}#}
 /*用户-删除*/
 function del_money_look(obj,id){
 	layer.confirm('确认要删除吗？',function(index){
@@ -126,3 +141,7 @@ function del_money_look(obj,id){
 	});
 }
     {% endblock yewu_js %}
+</script>
+
+
+

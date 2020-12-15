@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>确认操作</title>
+
+</head>
+<body>
+<div>
+<h4 align="center">请选择审核结果！</h4>
+    <input type="hidden" name="reim_num" value="{{ nid }}" >
+    <input type="hidden" name="reim_state" value="{{ reim_state }}">
+    <div align="center">
+       <button type="button" class="btn btn-primary radius" > <a href="{% url 'chuanshanghui:allow_apply' %}?nid={{ nid }}" >合格</a></button>
+        <button type="button" class="btn btn-primary radius" ><a href="{% url 'chuanshanghui:disallow_apply' %}?nid={{ nid }}" >不合格</a></button>
+    </div>
+</div>
+</body>
+{#<script>#}
+{#    function AjaxSendYes() {#}
+{#    $.ajax({#}
+{#        url:"/fund_appli_list/bangongshi_checkFundApply/allow_apply",#}
+{#        type:"POST",#}
+{#        data:{"reim_state":$("#reim_state").val(), "ifconfirmYes":$('#ifconfirmYes').val(), "ifconfirmNo":$('#ifconfirmNo').val()},#}
+{#        success:function(data){#}
+{#            // 当服务端处理完成后，返回数据时自动调用#}
+{#            // data是服务端返回的值#}
+{#            console.log(data)#}
+{#            if(data =='ok'){#}
+{#                alert("已通过审核！")#}
+{#            }else{#}
+{#                alert("审核不通过！")#}
+{#            }#}
+{#        }#}
+{#    })#}
+{#}#}
+{##}
+{#function AjaxSendNo(){#}
+{#    $.ajax({#}
+{#        url:"{% url 'chuanshanghui:allow_apply' %}",#}
+{#        type:"POST",#}
+{#        data:{"reim_state":$('#reim_state').val()},#}
+{#        success:function(data){#}
+{#            console.log(data)#}
+{#            if(data == '不ok'){#}
+{#                alert("操作成功!")#}
+{#            }#}
+{#        }#}
+{##}
+{#    })#}
+{#}#}
+{##}
+{#</script>#}
+
+</html>

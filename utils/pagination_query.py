@@ -1,6 +1,6 @@
 # 2020-12-05 创建该文件
 class PageInfo(object):
-    def __init__(self, current_page, all_count, per_page, show_page, page_url):
+    def __init__(self, current_page, all_count, per_page, show_page, page_url, key, keyname):
         # 防止用户传入非数字的值
         try:
             self.current_page = int(current_page)
@@ -14,6 +14,8 @@ class PageInfo(object):
         self.all_pager = a
         self.show_page = show_page
         self.page_url = page_url
+        self.key = key
+        self.keyname = keyname
 
     def start(self):
         return (self.current_page - 1) * self.per_page
@@ -42,34 +44,34 @@ class PageInfo(object):
                     stop = self.current_page + half + 1
 
         # 首页设置
-        first = "<a style='float: left;color: #880010' href='%s?page=%s'>&nbsp;&nbsp;首页&nbsp;|&nbsp;</a>" % (self.page_url, 1)
+        first = "<a style='float: left;color: #880010' href='%s?%s=%s&page=%s'>&nbsp;&nbsp;首页&nbsp;|&nbsp;</a>" % (self.page_url, self.keyname, self.key, 1)
         page_list.append(first)
 
         # 上一页的设置
         if self.current_page <=1:
-            pre = "<a style='float: left;color: #880001' href='%s?page=%s'>上一页</a>" % (self.page_url, 1)
+            pre = "<a style='float: left;color: #880001' href='%s?%s=%s&page=%s'>上一页</a>" % (self.page_url, self.keyname, self.key, 1)
         else:
-            pre  = "<a style='float: left;color: #880001' href='%s?page=%s'>上一页</a>" % (self.page_url, self.current_page-1)
+            pre  = "<a style='float: left;color: #880001' href='%s?%s=%s&page=%s'>上一页</a>" % (self.page_url, self.keyname, self.key, self.current_page-1)
         page_list.append(pre)
 
         for i in range(begin, stop):
             if i == self.current_page:
                 temp = "<a style='color: #DC143C;display:inline-black;padding:5px;margin:5p;'" \
-                       "href='%s?page=%s'><b>%s</b></a>" % (self.page_url, i, i,)
+                       "href='%s?%s=%s&page=%s'><b>%s</b></a>" % (self.page_url, self.keyname, self.key, i, i,)
             else:
                 temp = "<a style='display:inline-black;padding:5px;margin:5p;' " \
-                       "href='%s?page=%s'>%s</a>" % (self.page_url, i, i,)
+                       "href='%s?%s=%s&page=%s'>%s</a>" % (self.page_url, self.keyname, self.key, i, i,)
             page_list.append(temp)
 
         # 下一页的设置
         if self.current_page >= self.all_pager:
-            nex = "<a style='color: #880001' href='%s?page=%s'>下一页</a>" % (self.page_url, self.all_pager)
+            nex = "<a style='color: #880001' href='%s?%s=%s&&page=%s'>下一页</a>" % (self.page_url, self.keyname, self.key,self.all_pager)
         else:
-            nex  = "<a style='color: #880001' href='%s?page=%s'>下一页</a>" % (self.page_url, self.current_page+1)
+            nex = "<a style='color: #880001' href='%s?%s=%s&page=%s'>下一页</a>" % (self.page_url,  self.keyname, self.key, self.current_page+1)
         page_list.append(nex)
 
         # 尾页设置
-        end = "<a style='color: #880010' href='%s?page=%s'>&nbsp;|&nbsp;尾页</a>" % (self.page_url, self.all_pager)
+        end = "<a style='color: #880010' href='%s?%s=%s&page=%s'>&nbsp;|&nbsp;尾页</a>" % (self.page_url, self.keyname, self.key, self.all_pager)
         page_list.append(end)
 
         # 总页数统计

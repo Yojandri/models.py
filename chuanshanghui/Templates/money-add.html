@@ -5,56 +5,58 @@
     <script type="text/javascript" src="../static/lib/jquery.validation/1.14.0/jquery.validate.js"></script>
     <script type="text/javascript" src="../static/lib/jquery.validation/1.14.0/validate-methods.js"></script>
     <script type="text/javascript" src="../static/lib/jquery.validation/1.14.0/messages_zh.js"></script>
+    <script type="text/javascript" src="../static/lib/layer/2.4/layer.js"></script>
 	{% endblock staticfiles %}
 {% block body %}
 <article class="cl pd-20">
-	<form action='{% url "chuanshanghui:money_add" %}' method="post" class="form form-horizontal" id="money-add">
+	<form action='{% url "chuanshanghui:money_add" %}' method="POST" class="form form-horizontal" id="money-add">
 	{% csrf_token %}
-<div class="row cl">
+        <div class="row cl">
 			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>使用资金活动</label>
-			<span class="select-box inline">
-				<input type="text" name ="goodsfor_act" required autocomplete="off">
-			</span>
+{#			<span class="select-box inline">#}
+            <div class="formControls col-xs-8 col-sm-9">
+                <select name="goodsfor_act" id="act" class="select-box inline">
+                    {% for row in act_list %}
+                    <option value="{{ row.act_num }}">{{ row.act_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+{#			</span>#}
 		</div>
 		<div class="row cl">
 			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>物品名称</label>
 			<div class="formControls col-xs-8 col-sm-9">
-				<input type="text" name ="Goodsname" required autocomplete="off">
+				<input type="text" name ="Goodsname" class="input-text" id="goodsname" required >
 			</div>
 		</div>
 		<div class="row cl">
 			<label class="form-label col-xs-4 col-sm-3" ><span class="c-red">*</span>物品单价</label>
 			<div class="formControls col-xs-8 col-sm-9">
-                <input type="price" class="input-text" name ="Goodsprice" >
+                <input type="text" class="input-text" id="goodsprice"  name ="Goodsprice" required>
             </div>
 		</div>
 		<div class="row cl">
 			<label class="form-label col-xs-4 col-sm-3" ><span class="c-red">*</span>物品数量</label>
 			<div class="formControls col-xs-8 col-sm-9">
-				<input type="number" class="input-text" name ="Goodsqua" >
-			</div>
-		</div>
-		<div class="row cl">
-			<label class="form-label col-xs-4 col-sm-3" ><span class="c-red">*</span>物品总价</label>
-			<div class="formControls col-xs-8 col-sm-9">
-				<input type="price" class="input-text" name ="Goodstotal" >
+				<input type="number" class="input-text" id="goodsqua" name ="Goodsqua" required>
 			</div>
 		</div>
 		<div class="row cl">
 			<label class="form-label col-xs-4 col-sm-3">备注：</label>
 			<div class="formControls col-xs-8 col-sm-9">
-				<textarea name ="beizhu"  class="textarea"  placeholder="备注" onKeyUp="textarealength(this,100)"></textarea>
+				<textarea name ="beizhu" id="beizhu" class="textarea"  placeholder="备注" onKeyUp="textarealength(this,100)"></textarea>
 				<p class="textarea-numberbar"><em class="textarea-length">0</em>/100</p>
 			</div>
 		</div>
 		<div class="row cl">
 			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
-				<input class="btn btn-primary radius" id="btn" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;" name="">
+                <button class="btn btn-primary radius" id="btn" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;" name="提交">提交</button>
 			</div>
 		</div>
 	</form>
 </article>
 {% endblock body %}
+
 <script type="text/javascript" >
 {% block yewu_js %}
 	$(function(){
@@ -79,7 +81,7 @@
 				required:true,
 			},
 		},
-		onkeyup:false,
+		onkeyup:true,
 		focusCleanup:true,
 		success:"valid",
 		submitHandler:function(form){
@@ -90,5 +92,43 @@
 		}
 	});
 });
+    {#const btn = document.getElementsByTagName("button")[0]#}
+    {#const result = document.getElementById("result")#}
+    {#btn.onclick = function(){#}
+    {#//#}
+    {#    console.log("test")#}
+    {#    const xhr = new XMLHttpRequest();#}
+    {#    xhr.open("GET","{% url 'chuanshanghui:money_list' %}");#}
+    {#    xhr.send();#}
+    {#    xhr.onreadystatechange = function(){#}
+    {#        if(xhr.readystate === 4){#}
+    {#            if(xhr.status >= 200 && xhr.status < 300){#}
+    {#                console.log(xhr.status);#}
+    {#                console.log("OK!");#}
+    {#                result.innerHTML = "OK!"#}
+    {##}
+    {#            }#}
+    {#        }#}
+    {#    }#}
+    {##}
+    {#}#}
+    $('#btn').on('click',function(){
+        $.ajax({
+            //1.指定朝后端的哪个地址发送数据
+            url: '{% url 'chuanshanghui:money_add' %}',
+            type: 'POST',
+            data: JSON.stringify({'act':$('#act').val(), 'goodsname':$('#goodsname').val(),'goodsprice':$('#goodprice').val(), 'goodsqua':$('#goodsqua').val(), 'beizhu':$('#beizhu').val() }),
+            mimeType: "multipart/form-data", //告诉jQuery不要处理发送的数据，直接发送数据即可
+            async : false,
+            success: function(data){  // data形参指代的就是异步提交的返回结果
+                console.log(data)
+                if(data){
+                alert('添加成功！')
+                window.location.reload();
+                }
+            }
+        })
+    })
+
 {% endblock yewu_js %}
 </script>

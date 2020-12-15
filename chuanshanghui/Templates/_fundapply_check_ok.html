@@ -1,6 +1,35 @@
-{% extends "#base.html" %}
-{% block title %}保障申请{% endblock title %}
+{% extends '#base.html' %}
+{% block title %}报账申请{% endblock title %}
 {% block body %}
+    <!--遮罩层和显示层样式-->
+{#    <style>#}
+{#     .hide{#}
+{#         display:none;#}
+{#     }#}
+{#     .shadow{#}
+{#         position:fixed;#}
+{#         left:0;#}
+{#         top:0;#}
+{#         right:0;#}
+{#         bottom:0;#}
+{#         background-color:black;#}
+{#         opacity: 0.2;#}
+{#         z-index: 999;#}
+{#     }#}
+{#     .modal{#}
+{#         z-index: 1000;#}
+{#         position: fixed;#}
+{#         left: 50%;#}
+{#         top: 50%;#}
+{#         height: 400px;#}
+{#         width: 300px;#}
+{#         background-color: white;#}
+{#         margin-left: -200px;#}
+{#         margin-top: -150px;#}
+{#         opacity: 1;#}
+{#     }#}
+{#    </style>#}
+
     <section class="Hui-article-box">
 	<nav class="breadcrumb"><i class="Hui-iconfont"></i> <a href="/" class="maincolor">首页</a> <span class="c-999 en">&gt;</span><span class="c-666">报账申请</span></nav>
 	<div class="Hui-article">
@@ -17,23 +46,24 @@
 		          <td>&nbsp;</td>
 	            </tr>
                 <tr>
-		          <td align="center" valign="middle">
-                  <i class="Hui-iconfont">&#xe676;</i>提交申请
+		          <td align="center" valign="middle"><font color="green">
+                      <i class="Hui-iconfont">&#xe676;</i>提交申请</font>
 
                   </td>
-		          <td align="center" valign="middle" >
-                  <i class="Hui-iconfont">&#xe676;</i>审核申请</td>
-		          <td align="center" valign="middle">
-                  <i class="Hui-iconfont">&#xe676;</i>通过申请</td>
+		          <td align="center" valign="middle" ><font color="red">
+                  <i class="Hui-iconfont">&#xe676;</i>审核申请</font>
+                  </td>
+		          <td align="center" valign="middle"><font color="#a9a9a9">
+                      <i class="Hui-iconfont">&#xe676;</i>通过申请</font></td>
                   </tr>
 		        <tr>
-		          <td align="center">需要报账部门填写报账申请表</td>
-		          <td align="center">接收报账申请的部门审核提交的申请</td>
-		          <td align="center" valign="middle">申请通过</td>
+                    <td align="center"><font color="green">需要报账部门填写报账申请表</font></td>
+		          <td align="center"><font color="red"> 接收报账申请的部门审核提交的申请</font></td>
+		          <td align="center" valign="middle"><font color="#a9a9a9">申请通过</font> </td>
 	            </tr>
 		        <tr>
 		          <td>&nbsp;</td>
-		          <td>&nbsp;</td>
+		          <td>&nbsp;<input type="hidden" name="reim_num" value="{{ reimbursement.reim_num }}"/></td>
 		          <td>&nbsp;</td>
 	            </tr>
                 <tr>
@@ -76,6 +106,11 @@
 		          <td width="50">资金用于的事项：<b>{{ fundrecord.fund_for_matt }}</b></td>
 		          <td>&nbsp;</td>
 	            </tr>
+                <tr>
+                  <td>&nbsp;</td>
+		          <td width="50">报账申请状态：<input type="hidden" id="reim_state" name="reim_state" value="{{ reimbursement.reim_state }}"><b><font color="{{ color }}">{{ reimbursement.reim_state }}</font></b></td>
+		          <td>&nbsp;</td>
+                 </tr>
 		        <tr>
 		          <td>&nbsp;</td>
 		          <td>&nbsp;</td>
@@ -83,7 +118,14 @@
 	            </tr>
 		        <tr>
 		          <td>&nbsp;</td>
-		          <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" name="btnSubmit" value="已通过审核">&nbsp;</td>
+		          <td>
+                  <div class="cl pd-5 bg-1 bk-gray mt-20">
+				<!--<span class="l"> <a href="javascript:;" onclick="datadel()" class="btn btn-danger radius"><i class="Hui-iconfont">&#xe6e2;</i> 批量删除</a>-->
+                      <input type="hidden" name="reim_num" value="{{ reimbursement.reim_num }}">
+                      <a onclick="check_fundaplly('审核申请','{% url 'chuanshanghui:banggongshi_checkFundApply' %}?nid={{ reimbursement.reim_num }}','Update_reim_state' ,400,300);" > <button type="button" class="btn btn-primary radius" >点击审核</button></a>
+                  <span class="r"><!--共有数据：--><strong><!--7--></strong> <!--条--></span>
+                  </div>
+                  </td>
 		          <td>&nbsp;</td>
 	            </tr>
 			  <tr>
@@ -99,5 +141,81 @@
           </table>
 	  </article>
 	</div>
+    <!--遮罩层 -->
+    <div id="shadow" class="shadow hide"></div>
+    <!--显示层 -->
+    <div id="modal" class="modal hide">
+        <p>
+            <input id="title" type="text" name="title"/>
+        </p>
+        <h3 align="center">确认通过申请吗？</h3>
+        <input type="hidden" value="{{ reimbursement.reim_state }}" name="reim_state">
+        <input type="button" value="确认" onclick="AjaxSendYes();" />
+        <input type="button" value="取消" onclick="AjaxSendNo();" />
+    </div>
+
 </section>
 {% endblock body %}
+
+{% block yewu_js %}
+/*
+	参数解释：
+	title	标题
+	url		请求的url
+	id		需要操作的数据id
+	w		弹出层宽度（缺省调默认值）
+	h		弹出层高度（缺省调默认值）
+*/
+/*通过报账申请*/
+function check_fundaplly(title,url,id,w,h){
+	layer_show(title,url,id,w,h);
+}
+{#<script type="text/javascript">#}
+{#function showModal(){#}
+{#    document.getElementById("modal").classList.remove('hide');#}
+{#    document.getElementById("shadow").classList.remove('hide');#}
+{##}
+{#}#}
+{#function cancelModal(){#}
+{#    document.getElementById("shadow").classList.add('hide');#}
+{#    document.getElementById("modal").classList.add("hide");#}
+{#}#}
+{#function AjaxSendYes() {#}
+{#    $.ajax({#}
+{#        url:"{% url 'chuanshanghui:banggongshi_checkFundApply' %}",#}
+{#        type:"POST",#}
+{#        data:{"reim_state":$("#reim_state").val()},#}
+{#        success:function(data){#}
+{#            // 当服务端处理完成后，返回数据时自动调用#}
+{#            // data是服务端返回的值#}
+{#            console.log(data);#}
+{#            if(data =='ok'){#}
+{#                alert("已通过审核！")#}
+{#            }else{#}
+{#                alert("审核不通过！")#}
+{#            }#}
+{#        }#}
+{#    })#}
+{#}#}
+{##}
+{#function AjaxSendNo(){#}
+{#    $.ajax({#}
+{#        url:"{% url 'chuanshanghui:banggongshi_checkFundApply' %}",#}
+{#        type:"POST",#}
+{#        data:{"reim_state":$('#reim_state').val()},#}
+{#        success:function(data){#}
+{#            console.log(data)#}
+{#            if(data == '不ok'){#}
+{#                alert("操作成功")#}
+{#            }#}
+{#        }#}
+{##}
+{#    })#}
+{#}#}
+{##}
+{#function AjaxSend(title,url,w,h){#}
+{#	layer_show(title,url,w,h);#}
+{#}#}
+{#</script>#}
+{% endblock yewu_js %}
+

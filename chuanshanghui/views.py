@@ -7,7 +7,6 @@ from django.core.serializers import serialize
 from django.db.models import F, Q
 from django.shortcuts import render, redirect, HttpResponse
 from django.views import View
-
 from chuanshanghui.models import FundRecord, Reimbursement, DpMembers, ActivityInfo, People, Department,Goodslist, Cooperation, Article, ClassroomRecord, Classroom
 from datetime import datetime, timedelta
 from django import forms
@@ -82,7 +81,7 @@ def login(request):#登录
 
 def index(request):#首页
     if not request.session.get('is_login', None):
-        return render(request,'404.html')
+        return render(request, '404.html')
     else:
         usernum = request.session.get('person_num')
         people = People.objects.filter(stu_num=usernum)
@@ -199,7 +198,7 @@ def article_read(request):
     hitcount += 1
     article.article_hit = hitcount
     article.save()
-    return render(request, 'article_read.html', {'article':article,'person':person,'department':department})
+    return render(request, 'article_read.html', {'article' : article,'person': person, 'department' : department})
 
 
 def logout(request):#退出
@@ -276,7 +275,7 @@ def info_changeInfo(request):  # 修改个人信息
             person.save()
             return HttpResponse('修改成功')
         else:
-            return render(request,'info_changeInfo.html',{'message':'修改失败'})
+            return render(request,'info_changeInfo.html',{'message': '修改失败'})
     else:
         usernum = request.session.get('person_num')
         people = People.objects.filter(stu_num=usernum)
@@ -307,96 +306,101 @@ def fundapply_check(request):
             fund_pincharge = request.POST.get("fund_pincharge")
             stu_name = request.POST.get("stu_name")
             reim_amount = request.POST.get("reim_amount")
-            fund_for_matt = request.POST.get("fund_for_matt")
+            fund_for_matt = request.POST.get("fund_for_matt")  # 如何获取多个值2020-12-13
+            fund_for_matt_plus = request.POST.get('fund_for_matt_plus')
+            print(fund_for_matt_plus)
+            fund_for_matt = fund_for_matt + '、' + fund_for_matt_plus
+            try:
+                # 实例化报账对象
+                reimbursement = Reimbursement()
+                reim_to_ = Department(dp_num=reim_to)
+                # 处理reim_to字段
+                reimbursement.reim_to = reim_to_
+                # 处理fund_pincharge字段
+                reimbursement.fund_pinchrage = fund_pincharge
+                # 处理reim_state字段
+                reimbursement.reim_state = "未审核"
+                reim_state = reimbursement.reim_state
 
-            # 实例化报账对象
-            reimbursement = Reimbursement()
-            reim_to_ = Department(dp_num=reim_to)
-            # 处理reim_to字段
-            reimbursement.reim_to = reim_to_
-            # 处理fund_pincharge字段
-            reimbursement.fund_pinchrage = fund_pincharge
-            # 处理reim_state字段
-            reimbursement.reim_state = "未审核"
+                reimbursement.invo_appendix = invoice
+                print(reimbursement.invo_appendix)
 
-            reimbursement.invo_appendix = invoice
-            print(reimbursement.invo_appendix)
+                # 保存一个reimbursement记录
+                reimbursement.save()
 
-            # 保存一个reimbursement记录
-            reimbursement.save()
+                # 实例化资金对象
+                fundrecord = FundRecord()
 
-            # 实例化资金对象
-            fundrecord = FundRecord()
+                # 处理fund_for_dp字段
+                # Department实例
+                fund_for_dp_ = Department(dp_num=fund_for_dp)
+                fundrecord.fund_for_dp = fund_for_dp_
 
-            # 处理fund_for_dp字段
-            # Department实例
-            fund_for_dp_ = Department(dp_num=fund_for_dp)
-            fundrecord.fund_for_dp = fund_for_dp_
+                # 处理fund_for_act字段
+                fund_for_act_ = ActivityInfo(act_num=fund_for_act)
+                fundrecord.fund_for_act = fund_for_act_
 
-            # 处理fund_for_act字段
-            fund_for_act_ = ActivityInfo(act_num=fund_for_act)
-            fundrecord.fund_for_act = fund_for_act_
+                # 处理fund_for_matt字段
+                fundrecord.fund_for_matt = fund_for_matt
 
-            # 处理fund_for_matt字段
-            fundrecord.fund_for_matt = fund_for_matt
+                # 处理fund_amount字段
+                fundrecord.fund_amount = reim_amount
 
-            # 处理fund_amount字段
-            fundrecord.fund_amount = reim_amount
+                # 处理reim_to字段
+                reim_to_ = Department(dp_num=reim_to)
 
-            # 处理reim_to字段
-            reim_to_ = Department(dp_num=reim_to)
+                # 处理reim_num字段
+                reim_num = reimbursement.reim_num
+                fundrecord.reim_num_id = reim_num
 
-            # 处理reim_num字段
-            reim_num = reimbursement.reim_num
-            fundrecord.reim_num_id = reim_num
+                # 保存一条fundrecord记录
+                fundrecord.save()
 
-            # 保存一条fundrecord记录
-            fundrecord.save()
+                ff_act = ActivityInfo.objects.get(act_num=fund_for_act)
+                fund_for_act = ff_act.act_name
+                dp = Department.objects.get(dp_num=fund_for_dp)
+                fund_for_dp = dp.dp_name
 
-            ff_act = ActivityInfo.objects.get(act_num=fund_for_act)
-            fund_for_act = ff_act.act_name
-            dp = Department.objects.get(dp_num=fund_for_dp)
-            fund_for_dp = dp.dp_name
+                reim_to_dp = Department.objects.get(dp_num=reim_to)
+                reim_to = reim_to_dp.dp_name
 
-            reim_to_dp = Department.objects.get(dp_num=reim_to)
-            reim_to = reim_to_dp.dp_name
+                dp_member = People.objects.get(stu_num=fund_pincharge)
 
-            dp_member = People.objects.get(stu_num=fund_pincharge)
-
-            if dp_member.stu_name == stu_name:
-                return render(request, "_fundapply_check.html", {"reim_to": reim_to,
-                                                                 "fund_for_dp": fund_for_dp,
-                                                                 "fund_for_act": fund_for_act,
-                                                                 "fund_pincharge": fund_pincharge,
-                                                                 "stu_name": stu_name,
-                                                                 "reim_amount": reim_amount,
-                                                                 "fund_for_matt": fund_for_matt,
-                                                                 'person': person
-                                                                 })
-            else:
-                return HttpResponse("部门成员身份验证不通过，请联系系统管理员进行身份验证。")
+                if dp_member.stu_name == stu_name:
+                    return render(request, "_fundapply_check.html", {"reim_to": reim_to,
+                                                                     "fund_for_dp": fund_for_dp,
+                                                                     "fund_for_act": fund_for_act,
+                                                                     "fund_pincharge": fund_pincharge,
+                                                                     "stu_name": stu_name,
+                                                                     "reim_amount": reim_amount,
+                                                                     "fund_for_matt": fund_for_matt,
+                                                                     'person': person,
+                                                                     'reim_state':reim_state
+                                                                     })
+                else:
+                    return HttpResponse("部门成员身份验证不通过，请联系系统管理员进行身份验证。")
+            except Exception as e:
+                return HttpResponse(e)
         else:
             return HttpResponse("页面找不到了 404")
-
     except:
         HttpResponse('''数据保存出错！''')
 
 
+# 从审核列表点击查看单个报账申请的状态
 def fund_apply_state(request):
     nid = request.GET.get("nid")
-    conn = pymysql.connect(host="127.0.0.1", port=3309, user="root", password="022749@Yj", db='student_union_',
+    conn = pymysql.connect(host="127.0.0.1", port=3309, user="root", password="022749@Yj", db='20201210',
                            charset='utf8')
     cursor = conn.cursor(cursor=pymysql.cursors.DictCursor)
     cursor.execute("SELECT * FROM chuanshanghui_fundrecord WHERE fund_num = %s", [nid])
     fundrecord = cursor.fetchall()
-    print(fundrecord)
     reim_num = fundrecord[0]['reim_num_id']
     act_num = fundrecord[0]['fund_for_act_id']
     fund_for_dp_id = fundrecord[0]['fund_for_dp_id']
 
     cursor.execute("SELECT * FROM chuanshanghui_reimbursement WHERE reim_num = %s", [reim_num])
     reimbursement = cursor.fetchall()
-    print(reimbursement)
     reim_to = reimbursement[0]['reim_to_id']
     fundpincharge = reimbursement[0]['fund_pinchrage']
 
@@ -407,12 +411,19 @@ def fund_apply_state(request):
     act = ActivityInfo.objects.get(act_num=act_num)
     adp = Department.objects.get(dp_num=fund_for_dp_id)
     bdp = Department.objects.get(dp_num=reim_to)
+    if reimbursement[0]['reim_state'] == '未审核':
+        color = 'red'
+    elif reimbursement[0]['reim_state'] == '已审核，已通过':
+        color = 'green'
+    else:
+        color = 'blue'
     return render(request, "_fundapply_check_ok.html", {'fundrecord': fundrecord,
-                                                        'reimbursement': reimbursement,
+                                                        'reimbursement': reimbursement[0],
                                                         'stu': stu,
                                                         'act': act,
                                                         'adp': adp,
-                                                        'bdp': bdp
+                                                        'bdp': bdp,
+                                                        'color': color
                                                         })
 
 
@@ -428,11 +439,14 @@ def fund_apply(request):
         dp_fundfor = Department.objects.all()
         activity = ActivityInfo.objects.all()
         fund_pincharge = DpMembers.objects.filter()
+        goodslist = Goodslist.objects.all()
 
         return render(request, "fund_apply.html", {'person': person,
                                                    'dp_banggongshi': dp_bangongshi,
                                                    'dp_fundfor': dp_fundfor,
-                                                   'activity': activity})
+                                                   'activity': activity,
+                                                   'goodslist':goodslist
+                                                   })
 
 
 def fund_apply_list(request):
@@ -445,7 +459,7 @@ def fund_apply_list(request):
         # 如果本来就未登录，也就没有登出一说
         return redirect("/chuanshanghui/login/")
     # 连接数据库，利用SQL查询语句获取后端数据库
-    conn = pymysql.connect(host="127.0.0.1", port=3309, user="root", password="022749@Yj",db='20201207', charset='utf8')
+    conn = pymysql.connect(host="127.0.0.1", port=3309, user="root", password="022749@Yj",db='20201210', charset='utf8')
     cursor = conn.cursor(cursor=pymysql.cursors.DictCursor)
     cursor.execute("""
     select DISTINCT 
@@ -506,10 +520,10 @@ def queryByName(request):  # 2020-12-05 创建该函数
         # 如果本来就未登录，也就没有登出一说
         return redirect("/chuanshanghui/login/")
     try:
-        if request.method == 'POST':
-            dp_Name = request.POST.get("dp_Name")
+        if request.method == 'GET':
+            dp_Name = request.GET.get("dp_Name")
             # 连接数据库，利用SQL查询语句获取后端数据库
-            conn = pymysql.connect(host="127.0.0.1", port=3309, user="root", password="022749@Yj", db='student_union_',
+            conn = pymysql.connect(host="127.0.0.1", port=3309, user="root", password="022749@Yj", db='20201210',
                                    charset='utf8')
             cursor = conn.cursor(cursor=pymysql.cursors.DictCursor)
             cursor.execute("""
@@ -555,13 +569,85 @@ def queryByName(request):  # 2020-12-05 创建该函数
             fundapplylist = cursor.fetchall()
             cursor.close()
             conn.close()
-
-            page_info = pagination.PageInfo(request.GET.get("page"), len(fundapplylist), 5, 5,
-                                            'http://127.0.0.1:8000/chuanshanghui/fund_apply_list/queryByName/')
+            from utils import pagination_query
+            page_info = pagination_query.PageInfo(request.GET.get("page"), len(fundapplylist), 3, 5,
+                                            'http://127.0.0.1:8000/chuanshanghui/fund_apply_list/queryByName/', dp_Name, 'dp_Name')
             count = len(fundapplylist)
             print(count)
             fundapplylist = fundapplylist[page_info.start():page_info.end()]
-            return render(request, 'fund_apply_list.html', {'fundapplylist': fundapplylist, 'count': count, 'dp_Name': dp_Name, 'page_info': page_info})
+            return render(request, 'fund_apply_list.html', {'fundapplylist': fundapplylist, 'count': count, 'page_info': page_info})
+        else:
+            return HttpResponse("请重新输入查询词！")
+    except:
+        return HttpResponse("查询出错了，请检查你输入的查询词！")
+
+
+def queryByDp(request):  # 2020-12-05 创建该函数
+    usernum = request.session.get('person_num')
+    people = People.objects.filter(stu_num=usernum)
+    person = people.last()
+
+    # 检验登陆状态
+    if not request.session.get('is_login', None):
+        # 如果本来就未登录，也就没有登出一说
+        return redirect("/chuanshanghui/login/")
+    try:
+        if request.method == 'GET':
+            dp = request.GET.get("dp")
+            # 连接数据库，利用SQL查询语句获取后端数据库
+            conn = pymysql.connect(host="127.0.0.1", port=3309, user="root", password="022749@Yj", db='20201210',
+                                   charset='utf8')
+            cursor = conn.cursor(cursor=pymysql.cursors.DictCursor)
+            cursor.execute("""
+                select DISTINCT 
+                adp.dp_name as fund_for_dp, 
+                bdp.dp_name as reim_to, 
+                Fr.fund_num as fund_num,
+                Fr.fund_for_matt as fund_for_matt, 
+                Fr.fund_amount as fund_amount , 
+                ai.act_name as fund_for_act, 
+                Reim.reim_num as reim_num,
+                Reim.fund_pinchrage as fund_pincharge, 
+                Reim.apply_time as apply_time,
+                pp.stu_name as stu_name,
+                Reim.reim_state as reim_state
+                from 
+                chuanshanghui_fundrecord as Fr,
+                chuanshanghui_department as adp,
+                chuanshanghui_department as bdp,
+                chuanshanghui_activityinfo as ai,
+                chuanshanghui_reimbursement as Reim,
+                chuanshanghui_dpmembers as dm,
+                chuanshanghui_people as pp
+                where
+                # 连接Reimbursement和FundRecord表 Reim、Fr
+                Reim.reim_num = Fr.reim_num_id
+                AND
+                # 连接ActivityInfo表 ai
+                Fr.fund_for_act_id = ai.act_num
+                AND
+                # 连接存放发送申请部门信息的表 adp
+                adp.dp_num = Fr.fund_for_dp_id
+                AND
+                # 连接存放接收申请部门信息的表 bdp
+                bdp.dp_num = reim_to_id
+                AND
+                # 连接存放负责人信息的表 pp
+                Reim.fund_pinchrage = pp.stu_num
+                AND 
+                adp.dp_name = %s
+                ORDER BY Reim.apply_time
+                """, [dp])
+            fundapplylist = cursor.fetchall()
+            cursor.close()
+            conn.close()
+            from utils import pagination_query
+            page_info = pagination_query.PageInfo(request.GET.get("page"), len(fundapplylist), 3, 5,
+                                            'http://127.0.0.1:8000/chuanshanghui/fund_apply_list/queryByDp/', dp, 'dp')
+            count = len(fundapplylist)
+            print(count)
+            fundapplylist = fundapplylist[page_info.start():page_info.end()]
+            return render(request, 'fund_apply_list.html', {'fundapplylist': fundapplylist, 'count': count, 'page_info': page_info})
         else:
             return HttpResponse("请重新输入查询词！")
     except:
@@ -610,7 +696,7 @@ def fund_apply_AllDel(request):  # 批量删除
             count = request.GET.get('count')
             print(count)
             # 建立数据库连接
-            conn = pymysql.connect(host="127.0.0.1", port=3309, user="root", password="022749@Yj", db='20201207',
+            conn = pymysql.connect(host="127.0.0.1", port=3309, user="root", password="022749@Yj", db='20201210',
                                    charset='utf8')
             # 建立索引
             cursor = conn.cursor(cursor=pymysql.cursors.DictCursor)
@@ -661,6 +747,84 @@ def fund_apply_AllDel(request):  # 批量删除
         return HttpResponse('''删除数据出错！''')
 
 
+def banggongshi_checkFundApply(request):  # 办公室审核其他部门提交的报账申请
+    try:
+        usernum = request.session.get('person_num')
+        people = People.objects.filter(stu_num=usernum)
+        person = people.last()
+
+        # 检验登陆状态
+        if not request.session.get('is_login', None):
+            # 如果本来就未登录，也就没有登出一说
+            return redirect("/chuanshanghui/login/")
+        if request.method == "GET":
+            # 获取前端传来的nid和reim_state的值
+            nid = int(request.GET.get("nid"))
+            reim_state = Reimbursement.objects.get(reim_num__exact=nid).reim_state
+            # 将获取得到的数据渲染至前端
+            return render(request, "confirm.html", {'nid': nid, 'reim_state': reim_state})
+    except Exception as e:
+        return HttpResponse(e)
+
+# 审核并通过
+def allow_apply(request):
+    try:
+        usernum = request.session.get('person_num')
+        people = People.objects.filter(stu_num=usernum)
+        person = people.last()
+
+        # 检验登陆状态
+        if not request.session.get('is_login', None):
+            # 如果本来就未登录，也就没有登出一说
+            return redirect("/chuanshanghui/login/")
+
+        if request.method == 'GET':
+            nid = request.GET.get('nid')
+            reim_state = Reimbursement.objects.get(reim_num__exact=nid).reim_state
+            if reim_state == '未审核':
+                Reimbursement.objects.filter(reim_num__exact=nid).update(reim_state='已审核，已通过')
+                # 修改审核状态
+                reim_state = Reimbursement.objects.get(reim_num__exact=nid).reim_state
+                return HttpResponse("<script>alert('操作成功！')</script>")
+                # return redirect("/chuanshanghui/allow_apply/")
+            # 如果已审核，在页面直接提示
+            elif reim_state == '已审核，已通过':
+                return HttpResponse("<script>alert('该申请已审核，申请结果为“通过”！')</script>")
+            else:
+                return HttpResponse('<script>alert("操作有误！")</script>')
+    except Exception as e:
+        return HttpResponse(e)
+
+
+# 审核但不通过
+def disallow_apply(request):
+    try:
+        usernum = request.session.get('person_num')
+        people = People.objects.filter(stu_num=usernum)
+        person = people.last()
+
+        # 检验登陆状态
+        if not request.session.get('is_login', None):
+            # 如果本来就未登录，也就没有登出一说
+            return redirect("/chuanshanghui/login/")
+
+        if request.method == 'GET':
+            nid = request.GET.get('nid')
+            reim_state = Reimbursement.objects.get(reim_num__exact=nid).reim_state
+            print(reim_state)
+            if reim_state == '未审核':
+                Reimbursement.objects.filter(reim_num__exact=nid).update(reim_state='已审核，未通过')
+                # 修改审核状态
+                reim_state = Reimbursement.objects.get(reim_num__exact=nid).reim_state
+                return HttpResponse("<script>alert('操作成功！')</script>")
+                # return redirect("/chuanshanghui/allow_apply/")
+            # 如果已审核，在页面直接提示
+            elif reim_state == '已审核，未通过':
+                return HttpResponse("<script>alert('该申请已审核，申请结果为“未通过”！')</script>")
+            else:
+                return HttpResponse('<script>alert("操作有误！！")</script>')
+    except Exception as e:
+        return HttpResponse(e)
 
 
 # —————————————————————————————————————————资金管理结束———————————————————————————————————————————
@@ -686,30 +850,7 @@ def admin_list(request):
     return render(request, "admin-list.html", {'person': person})
 
 
-def money_add(request):
-   usernum = request.session.get('person_num')
-   people = People.objects.filter(stu_num=usernum)
-   person = people.last()
-   Goods__name = request.POST.get("Goodsname")
-   Goods__price = request.POST.get("Goodsprice")
-   Goods__qua = request.POST.get("Goodsqua")
-   Goods__total = request.POST.get("Goodstotal")
-   bei__zhu = request.POST.get("bei_zhu")
-   fund__for_act = request.POST.get("fundfor_act")
-   # 数据库操作
-   result = Goodslist(Goods_name=Goods__name, Goods_price=Goods__price, Goods_qua=Goods__qua, Goods_total=Goods__total,beizhu=bei__zhu, fund_for_act=fund__for_act)
-   if result:
-       return render(request, 'money-add.html', {'result': 1, 'person': person})
-   else:
-       return HttpResponse('插入失败！')
-   return render(request, 'money-add.html', {'result': 2, 'person': person})
-
-
-# def money_list(request):
-#     return render(request, "money-list.html")
-
-
-def money_list(request):  # 展示活动信息列表
+def money_list(request):  # 展示资金记录列表
     all_moneylist = FundRecord.objects.all().order_by('fund_num')  # 获取活动信息（单表）;降序
     return render(request, 'money-list.html', context={'all_moneylist': all_moneylist})  # 暂时只能实现单表查询
 
@@ -719,15 +860,73 @@ def money_apply(request):
     return render(request, 'money-apply.html', {'all_goodslist': all_goodslist})  # 暂时只能实现单表查询
 
 
+# 2020-12-12
+def money_add_form(request):
+    try:
+        act_list = ActivityInfo.objects.all()
+        return render(request, 'money-add.html', {'act_list': act_list})
+    except Exception as e:
+        return HttpResponse("<script>alert('操作失败')</script>")
+
+
+# 2020-12-12
+def money_add(request):   # 增加资金项
+    try:
+        if request.method == "POST":
+            Goods_for_act = request.POST.get('goodsfor_act')
+            Goods_name = request.POST.get('Goodsname')
+            Goods_price = int(request.POST.get('Goodsprice'))
+            Goods_qua = int(request.POST.get('Goodsqua'))
+            Goods_total = Goods_price * Goods_qua
+            bei_zhu = request.POST.get('beizhu')
+            Goodslist.objects.create(Goods_for_act_id=Goods_for_act, Goods_name=Goods_name, Goods_price=Goods_price,
+                                     Goods_qua=Goods_qua, Goods_total=Goods_total, beizhu=bei_zhu)
+            return redirect('/chuanshanghui/money_list')
+        else:
+            return render(request, 'money-add.html', {'message': "添加失败，请重试！"})
+    except Exception as e:
+        return HttpResponse("<script>alert('出现错误，请重试！')</script>")
+
+
 def money_look(request):  # 展示资金明细
-    all_goodslist =Goodslist.objects.all().order_by('Goods_num')  # 获取活动信息（单表）;降序
-    return render(request, 'money-look.html', { 'all_goodslist': all_goodslist})  # 暂时只能实现单表查询
+    all_goodslist = Goodslist.objects.all().order_by('Goods_num')  # 获取活动信息（单表）;降序
+    count = all_goodslist.count()
+    page_info = pagination.PageInfo(request.GET.get("page"), count, 5, 5, 'http://127.0.0.1:8000/chuanshanghui/money_look/')
+    print(count)
+    count_money = 0
+    for row in all_goodslist:
+        count_money = count_money + row.Goods_total
+    all_goodslist = all_goodslist[page_info.start():page_info.end()]
+    return render(request, 'money-look.html', {'all_goodslist': all_goodslist, 'count': count, 'page_info': page_info, 'count_money': count_money}) # 暂时只能实现单表查询
+
+
+def if_del_money(request):
+    try:
+        if request.method == "POST":
+            id = int(request.POST.get("id"))
+            print(id)
+            return render(request, 'if_del_money.html', {'id': id})
+        elif request.method == "GET":
+            id = request.GET.get("id")
+            print('if_del_money')
+            print(id)
+            return render(request, 'if_del_money.html', {"id": id})
+        else:
+            return HttpResponse('操作失败！请重试。')
+    except Exception as e:
+        return HttpResponse(e)
 
 
 def del_moneylook(request):   # 删除部门成员信息
-    id = request.GET.get('id')
-    Goodslist.objects.get(pk=id).delete( )
-    return redirect('chuanshanghui:money_look' )
+    id = int(request.POST.get('id'))
+    btn = request.POST.get('btn')
+    print(request.POST)
+    print(btn)
+    if btn == "delete":
+        Goodslist.objects.get(pk=id).delete()
+        return redirect('chuanshanghui:money_look')
+    elif btn == "cancel":
+        return HttpResponse("<script>alert('确定取消？')</script>")
 
 
 def classroom_list(request):   # 展示教室信息
@@ -742,118 +941,65 @@ def classroom_list(request):   # 展示教室信息
 
 
 def classroom_apply(request):
-    dps = Department.objects.all()
-    rooms = Classroom.objects.filter(classroom_borrowif='可借用')
-    if request.method== 'POST' :
-        id = request.POST.get('rom')
-        Room_for_dp = request.POST.get('room_for_dp_id')
-        Room_pincharge = request.POST.get('room_pincharge_id')
-        Room_for_matt = request.POST.get('room_for_matt')
-        ClassroomRecord.objects.create(room_num_id=id, room_for_dp_id=Room_for_dp, room_for_matt=Room_for_matt, room_pincharge_id=Room_pincharge, room_checkif='待审核', commands='无')
-#        R=ClassroomRecord()
-#        R.room_for_dp_id=Department.objects.filter(dp_num=Room_for_dp).first()
-#        R.room_num_id=Classroom.objects.filter(classroom_num=id).first()
-#        R.room_pincharge_id=Room_pincharge
-#        R.room_for_matt=Room_for_matt
-#        R.save()
-        Classroom.objects.filter(classroom_num=id).update(classroom_borrowif='审核中')
-        return redirect('chuanshanghui:a_success')
-    return render(request, 'classroom_apply.html', context={'dps': dps, 'rooms': rooms})
+    if request.method == "POST":
+        Room_num = request.session.get(Classroom.classroom_num)
+        Room_for_dp = request.POST.get("room_for_dp")
+        Room_pincharge = request.POST.get("room_pincharge")
+        Room_for_matt = request.POST.get("room_for_matt")
+        ClassroomRecord.objects.create(room_num=Room_num, room_for_dp=Room_for_dp, room_pincharge=Room_pincharge, room_for_matt=Room_for_matt)
+        return redirect(to='chuanshuanghui:a_success')
+        Classroom.objects.filter(classroom_borrowif__contains=0).update(classroom_borrowif=1)
+    return render(request, 'classroom_apply.html')
 
+def classroom_checklist(request):  # 展示活动信息列表
+    all_room_apply_list = ClassroomRecord.objects.all().order_by('room_num')  # 获取活动信息（单表）;降序
+    return render(request, 'classroom_checklist.html', context={'all_room_apply_list': all_room_apply_list})  # 暂时只能实现单表查询
 
-def classroom_applyed(request):
-    dps = Department.objects.all()
-    id = request.POST.get("dp")
-    rooms = ClassroomRecord.objects.filter(room_for_dp_id=id)
-    return render(request, 'classroom_applyed.html', {'rooms':rooms, 'dps':dps})
-
-
-def classroom_applydel(request):
-    id = request.GET.get('id')
-    rom = request.GET.get('room')
-    room = ClassroomRecord.objects.get(id=id)
-    if room.room_checkif=='已审核'or room.room_checkif=='待审核':
-        Classroom.objects.filter(classroom_num=rom).update(classroom_borrowif='可借用')
-    ClassroomRecord.objects.get(id=id).delete( )
-    return redirect('chuanshanghui:classroom_applyed' )
-
-
-def classroom_checklist(request):
-    all_room_apply_list = ClassroomRecord.objects.all().order_by('room_num')
-    return render(request, 'classroom_checklist.html', context={'all_room_apply_list': all_room_apply_list})
-
-
-def classroom_viewcheck(request):
-    room = request.GET.get('room')
-    all_room_apply_list = ClassroomRecord.objects.filter(room_num_id=room)
-    return render(request, 'classroom_viewcheck.html', {'all_room_apply_list':all_room_apply_list})
-
-
-def classroom_applypass(request):
-    room = request.GET.get('room')
-    ClassroomRecord.objects.filter(room_num_id=room).update(room_checkif='已审核')
-    Classroom.objects.filter(classroom_num=room).update(classroom_borrowif='已借用')
-    return render(request, 'a_success.html')
-
-
-def classroom_applyfail(request):
-    room = request.GET.get('room')
-    classroom = ClassroomRecord.objects.filter(room_num_id=room)
-    ClassroomRecord.objects.filter(room_num_id=room).update(room_checkif='未通过')
-    Classroom.objects.filter(classroom_num=room).update(classroom_borrowif='可借用')
-    return render(request, 'b_success.html', {'classroom':classroom})
-
-
-def classroom_applyfailb(request):
-    ro = request.POST.get('room')
-    com = request.POST.get('commands')
-    ClassroomRecord.objects.filter(room_num_id=ro).update(commands=com)
-    return render(request, 'a_success.html')
-
-
-#def classroom_viewcheck(request):
-   # usernum = request.session.get('person_num')
-  #  people = People.objects.filter(stu_num=usernum)
- #   person = people.last()
-
+def classroomapply_check(request):
+    usernum = request.session.get('person_num')
+    people = People.objects.filter(stu_num=usernum)
+    person = people.last()
     # 检验登陆状态
-#    if not request.session.get('is_login', None):
+    if not request.session.get('is_login', None):
         # 如果本来就未登录，也就没有登出一说
-#        return redirect("/chuanshanghui/login/")
-
+        return redirect("/chuanshanghui/login/")
+    return render(request, 'classroomapply_check.html')
 
     # 如果检验通过，则运行下面的代码
-   # obj = ClassroomRecord(request.POST)
-  #  if request.method == "POST":
+
+    obj = ClassroomApplyState(request.POST)
+    if request.method == "POST":
         # 获取前端POST过来的数据
- #       room_dp = request.POST.get("room_for_dp")
-#        room_pincharge = request.POST.get("room_pincharge")
-        #stu_name = request.POST.get("stu_name")
-       # room_for_matt = request.POST.get("room_for_matt")
+        room_for_dp = request.POST.get("room_for_dp")
+        room_pincharge = request.POST.get("room_pincharge")
+        stu_name = request.POST.get("stu_name")
+        room_for_matt = request.POST.get("room_for_matt")
 
         # Department实例
-      #  room_for_dp_ = Department(dp_num=room_dp)
+        room_for_dp_ = Department(dp_num=room_for_dp)
 
-     #   classroomrecord = ClassroomRecord()
-    #    classroomrecord.room_for_dp_id = room_for_dp_
-   #     classroomrecord.room_pinchrage_id = room_pincharge
-  #      classroomrecord.room_for_matt = room_for_matt
- #       classroomrecord.save()
-#
- #       dp = Department.objects.get(dp_num=room_for_dp_)
-#       room_for_dp = dp.dp_name
-#        dp_member = People.objects.get(stu_num=room_pincharge)
-#        if dp_member.stu_name == stu_name:
- #           return render(request, "classroom_viewcheck.html", {"room_for_dp": room_for_dp,
-  #                                                           "room_pincharge": room_pincharge,
-   #                                                          "stu_name": stu_name,
-    #                                                         "room_for_matt": room_for_matt,
-     #                                                        'person': person
-      #                                                       })
-#        else:
- #           return "部门成员身份验证不通过，请联系系统管理员进行身份验证。"
-  #  else:
-   #     return HttpResponse("页面找不到了 404")
+        classroomrecord = ClassroomRecord()
+        classroomrecord.room_for_dp = room_for_dp_
+        classroomrecord.room_pinchrage = room_pincharge
+        classroomrecord.room_for_act = room_for_act_
+        classroomrecord.room_for_matt = room_for_matt
+        classroomrecord.save()
+
+        dp = Department.objects.get(dp_num=room_for_dp)
+        room_for_dp = dp.dp_name
+        dp_member = People.objects.get(stu_num=room_pincharge)
+        if dp_member.stu_name == stu_name:
+            return render(request, "_fundapply_check.html", {"room_for_dp": room_for_dp,
+                                                             "room_for_act": room_for_act,
+                                                             "room_pincharge": room_pincharge,
+                                                             "stu_name": stu_name,
+                                                             "room_for_matt": room_for_matt,
+                                                             'person': person
+                                                             })
+        else:
+            return "部门成员身份验证不通过，请联系系统管理员进行身份验证。"
+    else:
+        return HttpResponse("页面找不到了 404")
 
 
 # 活动信息展示管理
@@ -1067,6 +1213,7 @@ def article_hitcount(request):
         else:
             return HttpResponse("暂无文章发布")
 
+
 # ——————————————————————————————————————————— 部门管理—————————————————————————————————————————————————————
 # 部门信息管理
 def dpmembers_list(request):    # 展示部门成员信息
@@ -1207,6 +1354,7 @@ def cooperation_add(request):  # 增加任务
 
 def cooperation_read(request):  # 查看详情
     return render(request, 'cooperation_read.html')
+
 
 # ---------------------------------------------权限管理------------------------------------------
 class AuthControlView(View):
